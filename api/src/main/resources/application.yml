@@ -7,29 +7,17 @@ spring:
   devtools:
     restart:
       enabled: false
+
+application:
+  version: /v1
+  prefix: /api
+  exclude-prefix-path: springdoc
+
 management:
   endpoints:
     web:
       exposure:
         include: metrics, prometheus, health
-
-logging:
-  level:
-    root: ${management.api.logging.level.root:INFO}
-    org.springframework.data.convert.CustomConversions: ERROR
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              MongoTemplate: ${management.api.logging.level.mongo:INFO}
-    com:
-      amazonaws:
-        util:
-          EC2MetadataUtils: error
-    io:
-      spring:
-        cloud: INFO
 
 ---
 spring:
@@ -55,10 +43,11 @@ spring:
       port: ${auth.mongo.port:27017}
       database: ${auth.mongo.database:test}
 
+
 ---
 spring:
   config:
-    import: classpath:aws-properties.yml, classpath:springdoc.yml
+    import: classpath:aws-properties-dev.yml, classpath:springdoc.yml
     activate:
       on-profile: dev
 
