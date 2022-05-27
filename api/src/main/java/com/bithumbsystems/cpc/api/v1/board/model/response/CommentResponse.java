@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class BoardResponse {
-  private Long id;
-  private String title;
+public class CommentResponse {
+  private String id;
   private String contents;
   private LocalDateTime createDate;
+  private String createAdminAccountId;
 }

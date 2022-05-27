@@ -1,7 +1,6 @@
 package com.bithumbsystems.persistence.mongodb.board.model.entity;
 
-import java.util.Date;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document(collection = "boardMaster")
+@Document(collection = "board-master")
 public class BoardMaster {
 
   /**
    * 게시판 ID
    */
-  private @Id String id;
+  @Id
+  private String id;
 
   /**
    * 사이트 ID
@@ -31,7 +31,7 @@ public class BoardMaster {
   /**
    * 사용여부
    */
-  private boolean isUse;
+  private Boolean isUse;
 
   /**
    * 게시판 유형
@@ -41,22 +41,22 @@ public class BoardMaster {
   /**
    * 댓글 허용 여부
    */
-  private boolean isAllowComment;
+  private Boolean isAllowComment;
 
   /**
    * 답글 허용 여
    */
-  private boolean isAllowReply;
+  private Boolean isAllowReply;
 
   /**
    * 파일 첨부 허용 여부
    */
-  private boolean isAllowAttachFile;
+  private Boolean isAllowAttachFile;
 
   /**
    * 카테고리 사용 여부
    */
-  private boolean isUseCategory;
+  private Boolean isUseCategory;
 
   /**
    * 카테고리
@@ -71,12 +71,12 @@ public class BoardMaster {
   /**
    * 페이지당 표시 건수
    */
-  private int countPerPage;
+  private Integer countPerPage;
 
   /**
    * 태그 사용 여부
    */
-  private int isUseTag;
+  private Integer isUseTag;
 
   /**
    * 태그
@@ -96,7 +96,7 @@ public class BoardMaster {
   /**
    * 생성날짜
    */
-  private Date createDate;
+  private LocalDateTime createDate;
 
   /**
    * 생성자 ID
@@ -106,7 +106,7 @@ public class BoardMaster {
   /**
    * 수정날짜
    */
-  private Date updateDate;
+  private LocalDateTime updateDate;
 
   /**
    * 수정자 ID
@@ -139,22 +139,22 @@ public class BoardMaster {
     /**
      * 카카오톡
      */
-    private boolean kakaotalk;
+    private Boolean kakaotalk;
 
     /**
      * 페이스북
      */
-    private boolean facebook;
+    private Boolean facebook;
 
     /**
      * 트위터
      */
-    private boolean twitter;
+    private Boolean twitter;
 
     /**
      * URL
      */
-    private boolean url;
+    private Boolean url;
   }
 
   /**
