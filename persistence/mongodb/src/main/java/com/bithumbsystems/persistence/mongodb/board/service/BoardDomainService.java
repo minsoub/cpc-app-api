@@ -9,9 +9,6 @@ import com.bithumbsystems.persistence.mongodb.board.repository.CommentRepository
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,18 +50,8 @@ public class BoardDomainService {
    * @return
    */
   public Flux<Board> getBoards(String boardMasterId, String keyword) {
-    ExampleMatcher matcher = ExampleMatcher.matchingAll()
-        .withStringMatcher(StringMatcher.CONTAINING)
-        .withIgnoreCase()
-        .withIgnorePaths("");
-
-    Example<Board> probe = Example.of(Board.builder()
-        .boardMasterId(boardMasterId)
-        .isUse(true)
-        .title(keyword)
-        .build(), matcher);
-
-    return boardRepository.findAllBy(probe);
+    Boolean isUse = true;
+    return boardRepository.findByBoardMasterIdAndIsUseAndTitleContainingIgnoreCase(boardMasterId, isUse, keyword);
   }
 
   /**
