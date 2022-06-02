@@ -9,6 +9,9 @@ import com.bithumbsystems.persistence.mongodb.board.repository.CommentRepository
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,16 +40,31 @@ public class BoardDomainService {
    * @return
    */
   public Mono<BoardMaster> saveBoardMaster(BoardMaster boardMaster) {
-    return boardMasterRepository.save(boardMaster);
+    boardMaster.setIsUse(true);
+    boardMaster.setCreateDate(LocalDateTime.now());
+    boardMaster.setCreateAdminAccountId("cpc-admin");
+    return boardMasterRepository.insert(boardMaster);
   }
 
   /**
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
+   * @param keyword 키워드
    * @return
    */
-  public Flux<Board> getBoardDataList(String boardMasterId) {
-    return boardRepository.findByBoardMasterId(boardMasterId);
+  public Flux<Board> getBoards(String boardMasterId, String keyword) {
+    ExampleMatcher matcher = ExampleMatcher.matchingAll()
+        .withStringMatcher(StringMatcher.CONTAINING)
+        .withIgnoreCase()
+        .withIgnorePaths("");
+
+    Example<Board> probe = Example.of(Board.builder()
+        .boardMasterId(boardMasterId)
+        .isUse(true)
+        .title(keyword)
+        .build(), matcher);
+
+    return boardRepository.findAllBy(probe);
   }
 
   /**
@@ -64,6 +82,7 @@ public class BoardDomainService {
    * @return
    */
   public Mono<Board> createBoard(Board board) {
+    board.setIsUse(true);
     board.setCreateDate(LocalDateTime.now());
     board.setCreateAdminAccountId("cpc-admin");
     return boardRepository.insert(board);

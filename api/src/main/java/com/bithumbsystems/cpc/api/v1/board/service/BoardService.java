@@ -1,6 +1,7 @@
 package com.bithumbsystems.cpc.api.v1.board.service;
 
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.util.PageSupport;
 import com.bithumbsystems.cpc.api.v1.board.exception.BoardException;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMapper;
 import com.bithumbsystems.cpc.api.v1.board.mapper.CommentMapper;
@@ -12,8 +13,11 @@ import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Comment;
 import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,10 +50,21 @@ public class BoardService {
   /**
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
+   * @param keyword 키워드
+   * @param page
    * @return
    */
-  public Flux<BoardResponse> getBoardDataList(String boardMasterId) {
-    return boardDomainService.getBoardDataList(boardMasterId).map(BoardMapper.INSTANCE::toDto);
+  public Mono<PageSupport<Board>> getBoards(String boardMasterId, String keyword, Pageable page) {
+    return boardDomainService.getBoards(boardMasterId, keyword)
+        .collectList()
+        .map(list -> new PageSupport<>(
+            list
+                .stream()
+                .sorted(Comparator.comparingLong(Board::getId).reversed())
+                .skip((page.getPageNumber() - 1) * page.getPageSize())
+                .limit(page.getPageSize())
+                .collect(Collectors.toList()),
+            page.getPageNumber(), page.getPageSize(), list.size()));
   }
 
   /**
@@ -79,14 +94,13 @@ public class BoardService {
    * @return
    */
   public Mono<Board> updateBoard(BoardRequest boardRequest) {
-//    Long boardId = boardRequest.getId();
-    return boardDomainService.getBoardData(boardRequest.getId())
+    Long boardId = boardRequest.getId();
+    return boardDomainService.getBoardData(boardId)
         .flatMap(board -> {
           board.setTitle(boardRequest.getTitle());
           board.setContents(boardRequest.getContents());
-          log.info(board.toString());
           return boardDomainService.updateBoard(board);
-        }).doOnError((e) -> log.error(e.getMessage()))
+        })
         .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_UPDATE_CONTENT)));
   }
 

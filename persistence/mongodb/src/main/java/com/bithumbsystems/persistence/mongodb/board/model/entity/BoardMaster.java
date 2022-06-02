@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document(collection = "board-master")
+@Document(collection = "board_master")
 public class BoardMaster {
 
   /**
@@ -44,7 +48,7 @@ public class BoardMaster {
   private Boolean isAllowComment;
 
   /**
-   * 답글 허용 여
+   * 답글 허용 여부
    */
   private Boolean isAllowReply;
 
@@ -76,7 +80,7 @@ public class BoardMaster {
   /**
    * 태그 사용 여부
    */
-  private Integer isUseTag;
+  private Boolean isUseTag;
 
   /**
    * 태그
@@ -96,21 +100,25 @@ public class BoardMaster {
   /**
    * 생성날짜
    */
+  @CreatedDate
   private LocalDateTime createDate;
 
   /**
    * 생성자 ID
    */
+  @CreatedBy
   private String createAdminAccountId;
 
   /**
    * 수정날짜
    */
+  @LastModifiedDate
   private LocalDateTime updateDate;
 
   /**
    * 수정자 ID
    */
+  @LastModifiedBy
   private String updateAdminAccountId;
 
   /**

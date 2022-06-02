@@ -29,7 +29,7 @@ spring:
     mongodb:
       host: ${auth.mongo.host:localhost}
       port: ${auth.mongo.port:27017}
-      database: ${auth.mongo.database:cpc}
+      database: ${auth.mongo.database:test}
       auto-index-creation: true
       uuid-representation: standard
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
@@ -44,7 +44,7 @@ spring:
     mongodb:
       host: ${auth.mongo.host:localhost}
       port: ${auth.mongo.port:27017}
-      database: ${auth.mongo.database:cpc}
+      database: ${auth.mongo.database:test}
       auto-index-creation: true
       uuid-representation: standard
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy

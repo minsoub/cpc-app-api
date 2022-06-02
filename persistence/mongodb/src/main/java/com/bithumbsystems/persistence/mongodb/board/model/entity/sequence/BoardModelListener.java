@@ -23,7 +23,9 @@ public class BoardModelListener extends AbstractMongoEventListener<Board> {
   @Override
   public void onBeforeConvert(BeforeConvertEvent<Board> event) {
     try {
-      event.getSource().setId(sequenceGenerator.generateSequence(Board.SEQUENCE_NAME));
+      if (event.getSource().getId() == null) {
+        event.getSource().setId(sequenceGenerator.generateSequence(Board.SEQUENCE_NAME));
+      }
     } catch (InterruptedException | ExecutionException e) {
       log.error("Error:{}", e.getMessage());
     }
