@@ -17,7 +17,7 @@ import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreCons
 
 @Log4j2
 @Data
-@Profile("dev|prod")
+@Profile("dev|prod|eks-dev")
 @Configuration
 public class ParameterStoreConfig {
 

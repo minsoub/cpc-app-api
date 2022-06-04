@@ -65,8 +65,16 @@ spring:
       on-profile: dev
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
-
 ---
+spring:
+  config:
+    import: classpath:aws-properties-eks-dev.yml, classpath:springdoc.yml
+    activate:
+      on-profile: eks-dev
+logging:
+  config: classpath:logback-spring-dev.xml
+---
+
 spring:
   config:
     import: classpath:aws-properties.yml
