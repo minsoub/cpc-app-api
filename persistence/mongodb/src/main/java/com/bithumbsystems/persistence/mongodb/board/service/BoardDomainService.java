@@ -40,7 +40,7 @@ public class BoardDomainService {
     boardMaster.setIsUse(true);
     boardMaster.setCreateDate(LocalDateTime.now());
     boardMaster.setCreateAdminAccountId("cpc-admin");
-    return boardMasterRepository.insert(boardMaster);
+    return boardMasterRepository.save(boardMaster);
   }
 
   /**

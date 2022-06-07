@@ -60,7 +60,9 @@ public class BoardService {
         .map(list -> new PageSupport<>(
             list
                 .stream()
-                .sorted(Comparator.comparingLong(Board::getId).reversed())
+                .sorted(Comparator
+                    .comparingLong(Board::getId)
+                    .reversed())
                 .skip((page.getPageNumber() - 1) * page.getPageSize())
                 .limit(page.getPageSize())
                 .collect(Collectors.toList()),
@@ -82,7 +84,7 @@ public class BoardService {
    * @return
    */
   public Mono<BoardResponse> createBoard(BoardRequest boardRequest) {
-    return boardDomainService.createBoard(BoardMapper.INSTANCE.toEntity(boardRequest))
+    return boardDomainService.createBoard(BoardMapper.INSTANCE.toEntity(boardRequest, boardRequest.getThumbnail()))
         .map(BoardMapper.INSTANCE::toDto)
         .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_CREATE_CONTENT)));
   }

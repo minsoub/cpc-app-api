@@ -1,5 +1,7 @@
 package com.bithumbsystems.cpc.api.v1.board.model.request;
 
+import com.bithumbsystems.persistence.mongodb.board.model.entity.Board.Thumbnail;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,11 +24,6 @@ public class BoardRequest {
   private Boolean isSecret;
   private String password;
   private String attachFileId;
+  private List<String> tags;
   private Thumbnail thumbnail;
-
-  @Data
-  public class Thumbnail {
-    private String desktop;
-    private String mobile;
-  }
 }

@@ -5,6 +5,7 @@ import static com.bithumbsystems.cpc.api.core.util.PageSupport.FIRST_PAGE_NUM;
 
 import com.bithumbsystems.cpc.api.core.model.response.MultiResponse;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
+import com.bithumbsystems.cpc.api.v1.board.model.enums.BoardType;
 import com.bithumbsystems.cpc.api.v1.board.model.request.BoardRequest;
 import com.bithumbsystems.cpc.api.v1.board.model.request.CommentRequest;
 import com.bithumbsystems.cpc.api.v1.board.service.BoardService;
@@ -43,10 +44,12 @@ public class BoardController {
   @PostMapping("/test")
   public ResponseEntity<Mono<?>> createBoardMaster() {
     return ResponseEntity.ok().body(boardService.saveBoardMaster(BoardMaster.builder()
-                .id("sample-board-02")
+                .id("sample-board-03")
                 .siteId("cpc-prj")
-                .type("20")
-                .name("샘플 게시판 02")
+                .type(BoardType.NOTICE.getCode())
+                .name("샘플 게시판 03")
+                .isUseTag(true)
+//                .tags(Arrays.asList("가상화폐", "루나", "테라"))
                 .isUse(true)
             .build())
         .map(boardResponse -> new SingleResponse(boardResponse)));

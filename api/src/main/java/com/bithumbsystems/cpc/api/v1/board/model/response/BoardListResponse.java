@@ -14,9 +14,4 @@ public class BoardListResponse {
   private Long id;
   private String title;
   private LocalDateTime createDate;
-  @Data
-  public class Thumbnail {
-    private String desktop;
-    private String mobile;
-  }
 }
