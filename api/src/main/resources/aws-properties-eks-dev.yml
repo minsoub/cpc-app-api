@@ -6,7 +6,7 @@ cloud:
     stack:
       auto: ${aws.stack.auto:false}
     s3:
-      bucket: ${aws.s3.bucket:lrc-dev-bucket}
+      bucket: ${aws.s3.bucket:cpc-dev-bucket}
     region:
       static: ${aws.region:ap-northeast-2}
       auto: ${aws.region.auto:false}
@@ -18,14 +18,14 @@ cloud:
 
 logging:
   level:
-    root: ${lrc.api.logging.level.root:DEBUG}
+    root: ${cpc.api.logging.level.root:DEBUG}
     org.springframework.data.convert.CustomConversions: ERROR
     org:
       springframework:
         data:
           mongodb:
             core:
-              MongoTemplate: ${lrc.api.logging.level.mongo:INFO}
+              MongoTemplate: ${cpc.api.logging.level.mongo:INFO}
     io:
       spring:
         cloud: INFO
