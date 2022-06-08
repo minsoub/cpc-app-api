@@ -1,5 +1,6 @@
 package com.bithumbsystems.cpc.api.core.exception;
 
+import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,13 @@ public class ExceptionHandlers {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public String serverExceptionHandler(Exception ex) {
+    log.error(ex.getMessage(), ex);
+    return ex.getMessage();
+  }
+
+  @ExceptionHandler(TimeoutException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public String serverExceptionHandler(TimeoutException ex) {
     log.error(ex.getMessage(), ex);
     return ex.getMessage();
   }

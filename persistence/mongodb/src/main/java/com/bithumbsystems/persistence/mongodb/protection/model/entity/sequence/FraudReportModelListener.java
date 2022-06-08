@@ -3,6 +3,7 @@ package com.bithumbsystems.persistence.mongodb.protection.model.entity.sequence;
 import com.bithumbsystems.persistence.mongodb.common.service.ISequenceGeneratorService;
 import com.bithumbsystems.persistence.mongodb.protection.model.entity.FraudReport;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
@@ -26,7 +27,7 @@ public class FraudReportModelListener extends AbstractMongoEventListener<FraudRe
       if (event.getSource().getId() == null) {
         event.getSource().setId(sequenceGenerator.generateSequence(FraudReport.SEQUENCE_NAME));
       }
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
       log.error("Error:{}", e.getMessage());
     }
   }

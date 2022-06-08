@@ -3,11 +3,9 @@ package com.bithumbsystems.cpc.api.v1.board.controller;
 import static com.bithumbsystems.cpc.api.core.util.PageSupport.DEFAULT_PAGE_SIZE;
 import static com.bithumbsystems.cpc.api.core.util.PageSupport.FIRST_PAGE_NUM;
 
-import com.bithumbsystems.cpc.api.core.model.response.MultiResponse;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.board.model.enums.BoardType;
 import com.bithumbsystems.cpc.api.v1.board.model.request.BoardRequest;
-import com.bithumbsystems.cpc.api.v1.board.model.request.CommentRequest;
 import com.bithumbsystems.cpc.api.v1.board.service.BoardService;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -134,39 +132,5 @@ public class BoardController {
     return ResponseEntity.ok().body(boardService.deleteBoard(boardId).then(
         Mono.just(new SingleResponse()))
     );
-  }
-
-  /**
-   * 댓글 목록 조회
-   * @param boardId 게시물 ID
-   * @return
-   */
-  @GetMapping("/{boardId}/comments")
-  public ResponseEntity<Mono<?>> getCommentList(@PathVariable Long boardId) {
-    return ResponseEntity.ok().body(boardService.getCommentList(boardId)
-        .collectList()
-        .map(commentResponses -> new MultiResponse(commentResponses)));
-  }
-
-  /**
-   * 댓글 조회
-   * @param commentId 댓글 ID
-   * @return
-   */
-  @GetMapping("/comment/{commentId}")
-  public ResponseEntity<Mono<?>> getComment(@PathVariable String commentId) {
-    return ResponseEntity.ok().body(boardService.getComment(commentId)
-        .map(commentResponse -> new SingleResponse(commentResponse)));
-  }
-
-  /**
-   * 댓글 등록
-   * @param comment 댓글
-   * @return
-   */
-  @PostMapping("/comment")
-  public ResponseEntity<Mono<?>> createComment(@RequestBody CommentRequest comment) {
-    return ResponseEntity.ok().body(boardService.createComment(comment)
-        .map(commentResponse -> new SingleResponse(commentResponse)));
   }
 }

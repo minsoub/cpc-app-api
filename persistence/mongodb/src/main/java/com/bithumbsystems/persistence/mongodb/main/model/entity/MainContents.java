@@ -4,11 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -61,28 +57,6 @@ public class MainContents {
    * 투자 가이드 게시판3 컨텐츠
    */
   private ArrayList<Long> investmentGuide3;
-
-  /**
-   * 생성날짜
-   */
-  @CreatedDate
   private LocalDateTime createDate;
-
-  /**
-   * 생성자 ID
-   */
-  @CreatedBy
-  private String createAdminAccountId;
-
-  /**
-   * 수정날짜
-   */
-  @LastModifiedDate
   private LocalDateTime updateDate;
-
-  /**
-   * 수정자 ID
-   */
-  @LastModifiedBy
-  private String updateAdminAccountId;
 }

@@ -17,4 +17,5 @@ public class LegalCounselingRequest {
   private String contents;
   private Boolean termsPrivacy;
   private Boolean answerToContacts;
+  private String attachFileId;
 }

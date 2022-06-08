@@ -20,9 +20,8 @@ public class FraudReportDomainService {
    * @param fraudReport 사기 신고
    * @return
    */
-  public Mono<Void> createFraudReport(FraudReport fraudReport) {
+  public Mono<FraudReport> createFraudReport(FraudReport fraudReport) {
     fraudReport.setCreateDate(LocalDateTime.now());
-    fraudReport.setCreateAdminAccountId("cpc-admin");
-    return fraudReportRepository.insert(fraudReport).then();
+    return fraudReportRepository.save(fraudReport);
   }
 }

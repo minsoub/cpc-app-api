@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class FraudReportRequest {
+  private String email;
   private String title;
   private String contents;
+  private Boolean termsPrivacy;
+  private Boolean answerToContacts;
+  private String attachFileId;
 }

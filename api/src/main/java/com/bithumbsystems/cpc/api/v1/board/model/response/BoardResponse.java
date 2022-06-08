@@ -1,6 +1,5 @@
 package com.bithumbsystems.cpc.api.v1.board.model.response;
 
-import com.bithumbsystems.persistence.mongodb.board.model.entity.Board.Thumbnail;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,6 @@ public class BoardResponse {
   private String title;
   private String contents;
   private List<String> tags;
-  private Thumbnail thumbnail;
+  private String thumbnail;
   private LocalDateTime createDate;
 }

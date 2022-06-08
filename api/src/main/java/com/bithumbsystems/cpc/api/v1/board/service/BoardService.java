@@ -4,14 +4,10 @@ import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
 import com.bithumbsystems.cpc.api.core.util.PageSupport;
 import com.bithumbsystems.cpc.api.v1.board.exception.BoardException;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMapper;
-import com.bithumbsystems.cpc.api.v1.board.mapper.CommentMapper;
 import com.bithumbsystems.cpc.api.v1.board.model.request.BoardRequest;
-import com.bithumbsystems.cpc.api.v1.board.model.request.CommentRequest;
 import com.bithumbsystems.cpc.api.v1.board.model.response.BoardResponse;
-import com.bithumbsystems.cpc.api.v1.board.model.response.CommentResponse;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
-import com.bithumbsystems.persistence.mongodb.board.model.entity.Comment;
 import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -19,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -84,7 +79,7 @@ public class BoardService {
    * @return
    */
   public Mono<BoardResponse> createBoard(BoardRequest boardRequest) {
-    return boardDomainService.createBoard(BoardMapper.INSTANCE.toEntity(boardRequest, boardRequest.getThumbnail()))
+    return boardDomainService.createBoard(BoardMapper.INSTANCE.toEntity(boardRequest))
         .map(BoardMapper.INSTANCE::toDto)
         .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_CREATE_CONTENT)));
   }
@@ -116,35 +111,5 @@ public class BoardService {
         .flatMap(boardDomainService::deleteBoard)
         .map(BoardMapper.INSTANCE::toDto)
         .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_DELETE_CONTENT)));
-  }
-
-  /**
-   * 댓글 목록 조회
-   * @param boardId 게시글 ID
-   * @return
-   */
-  public Flux<CommentResponse> getCommentList(Long boardId) {
-    return boardDomainService.getCommentList(boardId).map(CommentMapper.INSTANCE::toDto);
-  }
-
-  /**
-   * 댓글 조회
-   * @param commentId
-   * @return
-   */
-  public Mono<CommentResponse> getComment(String commentId) {
-    return boardDomainService.getComment(commentId).map(CommentMapper.INSTANCE::toDto);
-  }
-
-  /**
-   * 댓글 등록
-   * @param comment 댓글
-   * @return
-   */
-  public Mono<CommentResponse> createComment(CommentRequest comment) {
-    return boardDomainService.createComment(Comment.builder()
-        .boardId(comment.getBoardId())
-        .contents(comment.getContents())
-        .build()).map(CommentMapper.INSTANCE::toDto);
   }
 }

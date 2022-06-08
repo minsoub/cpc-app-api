@@ -38,3 +38,4 @@ out/
 
 ### Docker ###
 /docker/data/
+/docker/volume/

@@ -15,8 +15,6 @@ public interface LegalCounselingMapper {
   @Mapping(target = "status", ignore = true)
   @Mapping(target = "answer", ignore = true)
   @Mapping(target = "createDate", ignore = true)
-  @Mapping(target = "createAdminAccountId", ignore = true)
   @Mapping(target = "updateDate", ignore = true)
-  @Mapping(target = "updateAdminAccountId", ignore = true)
   LegalCounseling toEntity(LegalCounselingRequest legalCounselingRequest);
 }
