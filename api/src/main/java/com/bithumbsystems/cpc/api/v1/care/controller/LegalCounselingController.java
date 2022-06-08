@@ -6,6 +6,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.care.model.request.LegalCounselingRequest;
 import com.bithumbsystems.cpc.api.v1.care.service.LegalCounselingService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,9 @@ public class LegalCounselingController {
    * @return
    */
   @PostMapping(value = "/", consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+  @Operation(description = "법률 상담 등록")
   public ResponseEntity<Mono<?>> applyLegalCounseling(@RequestPart(value = "legalCounselingRequest") LegalCounselingRequest legalCounselingRequest,
-      @RequestPart(value = "file", required = false) Mono<FilePart> filePart) {
+      @RequestPart(value = "file", required = false) FilePart filePart) {
 
     return ResponseEntity.ok().body(legalCounselingService.saveAll(filePart, legalCounselingRequest).map(c -> new SingleResponse(c)));
   }

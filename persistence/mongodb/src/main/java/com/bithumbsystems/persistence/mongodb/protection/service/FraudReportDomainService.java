@@ -22,6 +22,6 @@ public class FraudReportDomainService {
    */
   public Mono<FraudReport> createFraudReport(FraudReport fraudReport) {
     fraudReport.setCreateDate(LocalDateTime.now());
-    return fraudReportRepository.save(fraudReport);
+    return fraudReportRepository.insert(fraudReport);
   }
 }

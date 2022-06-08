@@ -16,35 +16,13 @@ public class News {
   @Transient
   public static final String SEQUENCE_NAME = "news_sequence";
 
-  /**
-   * ID
-   */
   @Id
   private Long id;
 
-  /**
-   * 언론사
-   */
   private String newspaper;
-
-  /**
-   * 뉴스 제목
-   */
   private String title;
-
-  /**
-   * 썸네일 이미지 링크
-   */
   private String thumbnailUrl;
-
-  /**
-   * 뉴스 링크
-   */
   private String linkUrl;
-
-  /**
-   * 뉴스 게시일
-   */
   private Date postingDate;
   private LocalDateTime createDate;
   private LocalDateTime updateDate;

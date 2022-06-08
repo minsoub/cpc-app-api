@@ -12,7 +12,9 @@ public enum ErrorCode {
   NOT_FOUND_CONTENT("F004","not found content"),
   FAIL_UPDATE_CONTENT("F005","cannot update content"),
   FAIL_CREATE_CONTENT("F006","cannot create content"),
-  FAIL_DELETE_CONTENT("F007","cannot delete content");
+  FAIL_DELETE_CONTENT("F007","cannot delete content"),
+  DUPLICATE_KEY_ERROR("F008", "duplicate key error"),
+  TIMEOUT_ERROR("F009", "timeout error");
 
   private final String code;
   private final String message;

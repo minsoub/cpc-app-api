@@ -1,13 +1,11 @@
 package com.bithumbsystems.cpc.api.v1.board.service;
 
-import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
 import com.bithumbsystems.cpc.api.core.util.PageSupport;
-import com.bithumbsystems.cpc.api.v1.board.exception.BoardException;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMapper;
-import com.bithumbsystems.cpc.api.v1.board.model.request.BoardRequest;
+import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMasterMapper;
+import com.bithumbsystems.cpc.api.v1.board.model.response.BoardMasterResponse;
 import com.bithumbsystems.cpc.api.v1.board.model.response.BoardResponse;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
-import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
 import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -29,17 +27,8 @@ public class BoardService {
    * @param boardMasterId 게시판 ID
    * @return
    */
-  public Mono<BoardMaster> getBoardMasterInfo(String boardMasterId) {
-    return boardDomainService.getBoardMasterInfo(boardMasterId);
-  }
-
-  /**
-   * 게시판 마스터 저장 (테스트용)
-   * @param boardMaster 게시판 마스터
-   * @return
-   */
-  public Mono<BoardMaster> saveBoardMaster(BoardMaster boardMaster) {
-    return boardDomainService.saveBoardMaster(boardMaster);
+  public Mono<BoardMasterResponse> getBoardMasterInfo(String boardMasterId) {
+    return boardDomainService.getBoardMasterInfo(boardMasterId).map(BoardMasterMapper.INSTANCE::toDto);
   }
 
   /**
@@ -71,45 +60,5 @@ public class BoardService {
    */
   public Mono<BoardResponse> getBoardData(Long boardId) {
     return boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto);
-  }
-
-  /**
-   * 게시글 등록
-   * @param boardRequest 게시글
-   * @return
-   */
-  public Mono<BoardResponse> createBoard(BoardRequest boardRequest) {
-    return boardDomainService.createBoard(BoardMapper.INSTANCE.toEntity(boardRequest))
-        .map(BoardMapper.INSTANCE::toDto)
-        .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_CREATE_CONTENT)));
-  }
-
-  /**
-   * 게시글 수정
-   *
-   * @param boardRequest 게시글
-   * @return
-   */
-  public Mono<Board> updateBoard(BoardRequest boardRequest) {
-    Long boardId = boardRequest.getId();
-    return boardDomainService.getBoardData(boardId)
-        .flatMap(board -> {
-          board.setTitle(boardRequest.getTitle());
-          board.setContents(boardRequest.getContents());
-          return boardDomainService.updateBoard(board);
-        })
-        .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_UPDATE_CONTENT)));
-  }
-
-  /**
-   * 게시글 삭제
-   * @param boardId 게시글
-   * @return
-   */
-  public Mono<BoardResponse> deleteBoard(Long boardId) {
-    return boardDomainService.getBoardData(boardId)
-        .flatMap(boardDomainService::deleteBoard)
-        .map(BoardMapper.INSTANCE::toDto)
-        .switchIfEmpty(Mono.error(new BoardException(ErrorCode.FAIL_DELETE_CONTENT)));
   }
 }

@@ -15,30 +15,15 @@ public class FraudReport {
   @Transient
   public static final String SEQUENCE_NAME = "fraud_sequence";
 
-  /**
-   * ID
-   */
   @Id
   private Long id;
 
-  /**
-   * 상태
-   */
   private String status;
-
-  /**
-   * 제목
-   */
+  private String email;
   private String title;
-
-  /**
-   * 내용
-   */
   private String contents;
-
-  /**
-   * 첨부파일 ID
-   */
+  private Boolean termsPrivacy;
+  private Boolean answerToContacts;
   private String attachFileId;
   private LocalDateTime createDate;
   private LocalDateTime updateDate;

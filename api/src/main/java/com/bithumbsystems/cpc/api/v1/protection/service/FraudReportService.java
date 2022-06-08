@@ -18,10 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -39,44 +39,35 @@ public class FraudReportService {
   private final FileDomainService fileDomainService;
 
   @Transactional
-  public Mono<Void> saveAll(Mono<FilePart> filePart, FraudReportRequest fraudReportRequest) {
+  public Mono<FraudReport> saveAll(FilePart filePart, FraudReportRequest fraudReportRequest) {
     String fileKey = UUID.randomUUID().toString();
     AtomicReference<String> fileName = new AtomicReference<>();
     AtomicReference<Long> fileSize = new AtomicReference<>();
 
-    var fileJob = filePart.doOnNext(part -> {
-          log.debug("file name => " + part.filename());
-          fileName.set(part.filename());
-        })
-        .map(Part::content)
-        .log("DataBuffer")
-        .flatMap(data -> {
-          log.debug("Here is ....");
-          return DataBufferUtils.join(data)
-              .flatMap(dataBuffer -> {
-                log.debug("dataBuffer join...");
-                ByteBuffer buf = dataBuffer.asByteBuffer();
-                log.debug("byte size ===> " + buf.array().length);
+    fileName.set(filePart.filename());
+    log.debug("Here is ....");
 
-                fileSize.set((long) buf.array().length);
+    return DataBufferUtils.join(filePart.content())
+        .flatMap(dataBuffer -> {
+          log.debug("dataBuffer join...");
+          ByteBuffer buf = dataBuffer.asByteBuffer();
+          log.debug("byte size ===> " + buf.array().length);
 
-                return uploadFile(fileKey, fileName.toString(), fileSize.get(), awsProperties.getBucket(), buf)
-                    .flatMap(res -> {
-                      File info = File.builder()
-                          .fileKey(fileKey)
-                          .fileName(fileName.toString())
-                          .delYn(false)
-                          .build();
-                      return fileDomainService.save(info);
-                    })
-                    .log();
+          fileSize.set((long) buf.array().length);
+
+          return uploadFile(fileKey, fileName.toString(), fileSize.get(), awsProperties.getBucket(), buf)
+              .flatMap(res -> {
+                File info = File.builder()
+                    .fileKey(fileKey)
+                    .fileName(fileName.toString())
+                    .delYn(false)
+                    .build();
+                return fileDomainService.save(info);
               });
+        }).publishOn(Schedulers.boundedElastic()).flatMap(file -> {
+          fraudReportRequest.setAttachFileId(file.getFileKey());
+          return saveFraudReport(fraudReportRequest);
         });
-
-    fraudReportRequest.setAttachFileId(fileKey);
-    var saveJob = saveFraudReport(fraudReportRequest);
-
-    return Mono.when(fileJob, saveJob);
   }
 
   /**
