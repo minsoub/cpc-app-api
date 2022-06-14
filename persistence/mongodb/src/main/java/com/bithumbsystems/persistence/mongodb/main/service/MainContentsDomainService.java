@@ -13,13 +13,13 @@ import reactor.core.publisher.Mono;
 public class MainContentsDomainService {
 
   private final MainContentsRepository mainContentsRepository;
+  private final String id = "default";
 
   /**
    * 메인 컨텐츠 조회
-   * @param id
    * @return
    */
-  public Mono<MainContents> getMainContents(String id) {
+  public Mono<MainContents> findOne() {
     return mainContentsRepository.findById(id);
   }
 }

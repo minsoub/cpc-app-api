@@ -1,6 +1,6 @@
-package com.bithumbsystems.persistence.mongodb.care.entity.sequence;
+package com.bithumbsystems.persistence.mongodb.care.model.entity.sequence;
 
-import com.bithumbsystems.persistence.mongodb.care.entity.LegalCounseling;
+import com.bithumbsystems.persistence.mongodb.care.model.entity.LegalCounseling;
 import com.bithumbsystems.persistence.mongodb.common.service.ISequenceGeneratorService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;

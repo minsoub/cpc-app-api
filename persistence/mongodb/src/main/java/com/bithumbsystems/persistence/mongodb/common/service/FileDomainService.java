@@ -22,4 +22,14 @@ public class FileDomainService {
     info.setCreateDate(LocalDateTime.now());
     return fileRepository.save(info);
   }
+
+  /**
+   * 파일 정보 조회
+   *
+   * @param fileKey
+   * @return
+   */
+  public Mono<File> findById(String fileKey) {
+    return fileRepository.findById(fileKey);
+  }
 }

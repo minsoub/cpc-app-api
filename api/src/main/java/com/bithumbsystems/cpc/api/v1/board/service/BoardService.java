@@ -38,7 +38,7 @@ public class BoardService {
    * @param page
    * @return
    */
-  public Mono<PageSupport<Board>> getBoards(String boardMasterId, String keyword, Pageable page) {
+  public Mono<PageSupport<BoardResponse>> getBoards(String boardMasterId, String keyword, Pageable page) {
     return boardDomainService.getBoards(boardMasterId, keyword)
         .collectList()
         .map(list -> new PageSupport<>(
@@ -49,6 +49,7 @@ public class BoardService {
                     .reversed())
                 .skip((page.getPageNumber() - 1) * page.getPageSize())
                 .limit(page.getPageSize())
+                .map(BoardMapper.INSTANCE::toDto)
                 .collect(Collectors.toList()),
             page.getPageNumber(), page.getPageSize(), list.size()));
   }

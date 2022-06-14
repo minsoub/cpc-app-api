@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum Status implements EnumMapperType {
 
   REGISTER("접수"),
+  REQUEST("답변요청"),
   COMPLETE("답변완료");
 
   private final String title;

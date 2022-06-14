@@ -25,13 +25,13 @@ public class NewsController {
   private final NewsService newsService;
 
   /**
-   * 뉴스 목록 조회
+   * 블록체인 뉴스 목록 조회
    * @param query 검색어
    * @return
    */
   @GetMapping
-  @Operation(description = "뉴스 목록 조회")
-  public ResponseEntity<Mono<?>> getBoardDataList(@RequestParam(name = "query", required = false, defaultValue = "") String query)
+  @Operation(description = "블록체인 뉴스 목록 조회")
+  public ResponseEntity<Mono<?>> getNewsList(@RequestParam(name = "query", required = false, defaultValue = "") String query)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
     log.info("keyword: {}", keyword);

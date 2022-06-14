@@ -10,5 +10,6 @@ public interface BoardMasterMapper {
 
   BoardMasterMapper INSTANCE = Mappers.getMapper(BoardMasterMapper.class);
 
+
   BoardMasterResponse toDto(BoardMaster boardMaster);
 }

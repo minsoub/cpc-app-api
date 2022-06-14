@@ -13,8 +13,8 @@ public class LegalCounselingRequest {
   private String name;
   private String email;
   private String cellPhone;
-  private String title;
   private String contents;
+  private Boolean servicePrivacy;
   private Boolean termsPrivacy;
   private Boolean answerToContacts;
   private String attachFileId;

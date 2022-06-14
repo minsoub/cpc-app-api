@@ -32,12 +32,11 @@ public class FraudReportController {
    * @param filePart 첨부 파일
    * @return
    */
-  @PostMapping(value = "/", consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+  @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
   @Operation(description = "사기 신고 등록")
-  public ResponseEntity<Mono<?>> createBoard(@RequestPart(value = "fraudReportRequest") FraudReportRequest fraudReportRequest,
+  public ResponseEntity<Mono<?>> createFraudReport(@RequestPart(value = "fraudReportRequest") FraudReportRequest fraudReportRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 
     return ResponseEntity.ok().body(fraudReportService.saveAll(filePart, fraudReportRequest).map(c -> new SingleResponse(c)));
-
   }
 }

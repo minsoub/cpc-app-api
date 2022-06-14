@@ -1,7 +1,6 @@
-package com.bithumbsystems.persistence.mongodb.main.model.entity;
+package com.bithumbsystems.persistence.mongodb.care.model.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -9,22 +8,28 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document(collection = "cpc_main_contents")
-public class MainContents {
+@Document(collection = "cpc_legal_counseling")
+public class LegalCounseling {
 
-  @Id private String id;
-  private List<Long> virtualAssetTrends;
-  private List<Long> blockchainNews;
-  private String investmentGuide1Id;
-  private List<Long> investmentGuide1;
-  private String investmentGuide2Id;
-  private List<Long> investmentGuide2;
-  private String investmentGuide3Id;
-  private List<Long> investmentGuide3;
+  @Transient
+  public static final String SEQUENCE_NAME = "counseling_sequence";
+
+  @Id private Long id;
+  private String status;
+  private String name;
+  private String email;
+  private String contents;
+  private String cellPhone;
+  private String attachFileId;
+  private Boolean servicePrivacy;
+  private Boolean termsPrivacy;
+  private Boolean answerToContacts;
+  private String answer;
   @CreatedDate private LocalDateTime createDate;
   @CreatedBy private String createAccountId;
   @LastModifiedDate private LocalDateTime updateDate;

@@ -2,7 +2,7 @@ package com.bithumbsystems.cpc.api.v1.guide.service;
 
 import com.bithumbsystems.cpc.api.v1.guide.mapper.NewsMapper;
 import com.bithumbsystems.cpc.api.v1.guide.model.response.NewsResponse;
-import com.bithumbsystems.persistence.mongodb.board.service.NewsDomainService;
+import com.bithumbsystems.persistence.mongodb.guide.service.NewsDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class NewsService {
   private final NewsDomainService newsDomainService;
 
   /**
-   * 게시글 목록 조회
+   * 블록체인 뉴스 목록 조회
    * @param keyword 키워드
    * @return
    */

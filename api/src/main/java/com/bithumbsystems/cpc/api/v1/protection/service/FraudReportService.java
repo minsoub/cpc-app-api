@@ -1,6 +1,8 @@
 package com.bithumbsystems.cpc.api.v1.protection.service;
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
+import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.v1.protection.exception.FraudReportException;
 import com.bithumbsystems.cpc.api.v1.protection.mapper.FraudReportMapper;
 import com.bithumbsystems.cpc.api.v1.protection.model.enums.Status;
 import com.bithumbsystems.cpc.api.v1.protection.model.request.FraudReportRequest;
@@ -8,6 +10,8 @@ import com.bithumbsystems.persistence.mongodb.common.model.entity.File;
 import com.bithumbsystems.persistence.mongodb.common.service.FileDomainService;
 import com.bithumbsystems.persistence.mongodb.protection.model.entity.FraudReport;
 import com.bithumbsystems.persistence.mongodb.protection.service.FraudReportDomainService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +42,12 @@ public class FraudReportService {
   private final S3AsyncClient s3AsyncClient;
   private final FileDomainService fileDomainService;
 
+  /**
+   * 사기 신고 등록(파일 업로드 후 사기 신고 정보 저장)
+   * @param filePart 업로드 파일
+   * @param fraudReportRequest 사기 신고
+   * @return
+   */
   @Transactional
   public Mono<FraudReport> saveAll(FilePart filePart, FraudReportRequest fraudReportRequest) {
     String fileKey = UUID.randomUUID().toString();
@@ -77,7 +87,7 @@ public class FraudReportService {
    */
   public Mono<FraudReport> saveFraudReport(FraudReportRequest fraudReportRequest) {
     FraudReport fraudReport = FraudReportMapper.INSTANCE.toEntity(fraudReportRequest);
-    fraudReport.setStatus(Status.REGISTER.getCode()); // '접수' 상태
+    fraudReport.setStatus(fraudReportRequest.getAnswerToContacts()? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
     return fraudReportDomainService.createFraudReport(fraudReport);
   }
 
@@ -95,8 +105,12 @@ public class FraudReportService {
     // String fileName = part.filename();
     log.debug("save => fileKey : " + fileKey);
     Map<String, String> metadata = new HashMap<String, String>();
-    metadata.put("filename", fileName);
-    metadata.put("filesize", String.valueOf(fileSize));
+    try {
+      metadata.put("filename", URLEncoder.encode(fileName, "UTF-8"));
+      metadata.put("filesize", String.valueOf(fileSize));
+    } catch (UnsupportedEncodingException e) {
+      return Mono.error(new FraudReportException(ErrorCode.FAIL_SAVE_FILE));
+    }
 
     PutObjectRequest objectRequest = PutObjectRequest.builder()
         .bucket(bucketName)

@@ -1,13 +1,17 @@
 package com.bithumbsystems.cpc.api.v1.care.service;
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
+import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.v1.care.exception.LegalCounselingException;
 import com.bithumbsystems.cpc.api.v1.care.mapper.LegalCounselingMapper;
 import com.bithumbsystems.cpc.api.v1.care.model.enums.Status;
 import com.bithumbsystems.cpc.api.v1.care.model.request.LegalCounselingRequest;
-import com.bithumbsystems.persistence.mongodb.care.entity.LegalCounseling;
+import com.bithumbsystems.persistence.mongodb.care.model.entity.LegalCounseling;
 import com.bithumbsystems.persistence.mongodb.care.service.LegalCounselingDomainService;
 import com.bithumbsystems.persistence.mongodb.common.model.entity.File;
 import com.bithumbsystems.persistence.mongodb.common.service.FileDomainService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +42,12 @@ public class LegalCounselingService {
   private final S3AsyncClient s3AsyncClient;
   private final FileDomainService fileDomainService;
 
+  /**
+   * 법률 상담 신청(파일 업로드 후 법률 상담 정보 저장)
+   * @param filePart 업로드 파일
+   * @param legalCounselingRequest 법률 상담
+   * @return
+   */
   @Transactional
   public Mono<LegalCounseling> saveAll(FilePart filePart, LegalCounselingRequest legalCounselingRequest) {
     String fileKey = UUID.randomUUID().toString();
@@ -78,7 +88,6 @@ public class LegalCounselingService {
   public Mono<LegalCounseling> saveLegalCounseling(LegalCounselingRequest legalCounselingRequest) {
     LegalCounseling legalCounseling = LegalCounselingMapper.INSTANCE.toEntity(legalCounselingRequest);
     legalCounseling.setStatus(legalCounseling.getAnswerToContacts()? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
-    log.debug("service createLegalCounseling legalCounseling => {}", legalCounseling);
     return legalCounselingDomainService.createLegalCounseling(legalCounseling);
   }
 
@@ -95,8 +104,13 @@ public class LegalCounselingService {
   private Mono<PutObjectResponse> uploadFile(String fileKey, String fileName, Long fileSize, String bucketName, ByteBuffer content) {
     log.debug("save => fileKey : " + fileKey);
     Map<String, String> metadata = new HashMap<String, String>();
-    metadata.put("filename", fileName);
-    metadata.put("filesize", String.valueOf(fileSize));
+
+    try {
+      metadata.put("filename", URLEncoder.encode(fileName, "UTF-8"));
+      metadata.put("filesize", String.valueOf(fileSize));
+    } catch (UnsupportedEncodingException e) {
+      return Mono.error(new LegalCounselingException(ErrorCode.FAIL_SAVE_FILE));
+    }
 
     PutObjectRequest objectRequest = PutObjectRequest.builder()
         .bucket(bucketName)
