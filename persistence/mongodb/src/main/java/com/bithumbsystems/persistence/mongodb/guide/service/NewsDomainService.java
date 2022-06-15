@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -22,5 +23,15 @@ public class NewsDomainService {
    */
   public Flux<News> getNewsList(String keyword) {
     return newsRepository.findByCondition(keyword, LocalDate.now());
+  }
+
+  /**
+   * 블록체인 뉴스 조회
+   * @param id ID
+   * @return
+   */
+  public Mono<News> getNewsData(Long id) {
+    Boolean isUse = true;
+    return newsRepository.findByIdAndIsUse(id, isUse);
   }
 }

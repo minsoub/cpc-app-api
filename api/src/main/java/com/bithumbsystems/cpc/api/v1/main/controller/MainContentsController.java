@@ -23,27 +23,40 @@ public class MainContentsController {
   private final MainContentsService mainContentsService;
 
   /**
-   * 메인화면 선택된 컨텐츠 조회
+   * 메인화면 뉴스 선택된 컨텐츠 조회
    * @return
    */
-  @GetMapping
+  @GetMapping(value = "/news")
+  @Operation(description = "메인화면 뉴스 컨텐츠 조회")
+  public ResponseEntity<Mono<?>> getMainNews() {
+    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getMainContents(),
+            mainContentsService.getVirtualAssetTrends(),
+            mainContentsService.getBlockchainNews())
+        .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
+            .virtualAssetTrends(tuple.getT2())
+            .blockchainNews(tuple.getT3())
+            .build()))
+        .map(response -> new SingleResponse(response)));
+  }
+
+  /**
+   * 메인화면 하단 선택된 컨텐츠 조회
+   * @return
+   */
+  @GetMapping(value = "/contents")
   @Operation(description = "메인화면 선택된 컨텐츠 조회")
   public ResponseEntity<Mono<?>> getMainContents() {
     return ResponseEntity.ok().body(Mono.zip(mainContentsService.getMainContents(),
-            mainContentsService.getVirtualAssetTrends(),
-            mainContentsService.getBlockchainNews(),
             mainContentsService.getInvestmentGuide1(),
             mainContentsService.getInvestmentGuide2(),
             mainContentsService.getInvestmentGuide3())
         .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
-            .virtualAssetTrends(tuple.getT2())
-            .blockchainNews(tuple.getT3())
             .investmentGuide1Id(tuple.getT1().getInvestmentGuide1Id())
-            .investmentGuide1(tuple.getT4())
+            .investmentGuide1(tuple.getT2())
             .investmentGuide2Id(tuple.getT1().getInvestmentGuide2Id())
-            .investmentGuide2(tuple.getT5())
+            .investmentGuide2(tuple.getT3())
             .investmentGuide3Id(tuple.getT1().getInvestmentGuide3Id())
-            .investmentGuide3(tuple.getT6())
+            .investmentGuide3(tuple.getT4())
             .build()))
         .map(response -> new SingleResponse(response)));
   }

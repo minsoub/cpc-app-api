@@ -1,6 +1,7 @@
 package com.bithumbsystems.cpc.api.v1.main.model.response;
 
 import com.bithumbsystems.cpc.api.v1.board.model.response.BoardResponse;
+import com.bithumbsystems.cpc.api.v1.guide.model.response.NewsResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class MainContentsResponse {
 
   private List<BoardResponse> virtualAssetTrends;
-  private List<BoardResponse> blockchainNews;
+  private List<NewsResponse> blockchainNews;
   private String investmentGuide1Id;
   private List<BoardResponse> investmentGuide1;
   private String investmentGuide2Id;
