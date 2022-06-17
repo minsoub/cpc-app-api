@@ -4,6 +4,7 @@ import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
 import com.bithumbsystems.persistence.mongodb.board.repository.BoardMasterRepository;
 import com.bithumbsystems.persistence.mongodb.board.repository.BoardRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,9 +34,9 @@ public class BoardDomainService {
    * @param keyword 키워드
    * @return
    */
-  public Flux<Board> getBoards(String boardMasterId, String keyword) {
+  public Flux<Board> getBoards(String boardMasterId, String keyword, List<String> categories) {
     Boolean isUse = true;
-    return boardRepository.findByCondition(boardMasterId, isUse, keyword);
+    return boardRepository.findByConditionWithCategory(boardMasterId, isUse, keyword, categories);
   }
 
   /**

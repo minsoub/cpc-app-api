@@ -25,7 +25,7 @@ public class BoardMaster {
   private Boolean isAllowReply;
   private Boolean isAllowAttachFile;
   private Boolean isUseCategory;
-  private List<Category> categories;
+  private List<String> categories;
   private String paginationType;
   private Integer countPerPage;
   private Boolean isUseTag;
@@ -36,12 +36,6 @@ public class BoardMaster {
   @CreatedBy private String createAccountId;
   @LastModifiedDate private LocalDateTime updateDate;
   @LastModifiedBy private String updateAccountId;
-
-  @Data
-  public static class Category {
-    private String categoryId;
-    private String categoryName;
-  }
 
   @Data
   public static class Sns {

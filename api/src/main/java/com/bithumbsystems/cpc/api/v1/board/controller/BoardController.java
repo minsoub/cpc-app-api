@@ -9,8 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,13 +58,20 @@ public class BoardController {
   public ResponseEntity<Mono<?>> getBoards(
       @PathVariable String boardMasterId,
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
+      @RequestParam(name = "categoryParam", required = false) String categoryParam,
       @RequestParam(name = "pageNo", defaultValue = FIRST_PAGE_NUM) int pageNo,
       @RequestParam(name = "pageSize", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
     log.info("keyword: {}", keyword);
 
-    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, PageRequest.of(pageNo, pageSize))
+    List<String> categories = new ArrayList<String>();
+    if (StringUtils.isNotEmpty(categoryParam)) {
+      categories = Arrays.asList(URLDecoder.decode(categoryParam, "UTF-8").split(";"));
+    }
+    log.debug("categories: {}", categories);
+
+    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize))
         .map(response -> new SingleResponse(response)));
   }
 

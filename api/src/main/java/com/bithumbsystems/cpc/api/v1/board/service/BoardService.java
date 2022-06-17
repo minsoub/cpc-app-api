@@ -8,6 +8,7 @@ import com.bithumbsystems.cpc.api.v1.board.model.response.BoardResponse;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,8 @@ public class BoardService {
    * @param page
    * @return
    */
-  public Mono<PageSupport<BoardResponse>> getBoards(String boardMasterId, String keyword, Pageable page) {
-    return boardDomainService.getBoards(boardMasterId, keyword)
+  public Mono<PageSupport<BoardResponse>> getBoards(String boardMasterId, String keyword, List<String> categories, Pageable page) {
+    return boardDomainService.getBoards(boardMasterId, keyword, categories)
         .collectList()
         .map(list -> new PageSupport<>(
             list
