@@ -36,6 +36,7 @@ public class BoardDomainService {
    * @param boardMasterId 게시판 ID
    * @param keyword 키워드
    * @param categories 카테고리
+   * @param pageable 페이지 정보
    * @return
    */
   public Flux<Board> findPageBySearchText(String boardMasterId, String keyword, List<String> categories, Pageable pageable) {

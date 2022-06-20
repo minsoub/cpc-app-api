@@ -36,7 +36,7 @@ public class MainContentsController {
             .virtualAssetTrends(tuple.getT2())
             .blockchainNews(tuple.getT3())
             .build()))
-        .map(response -> new SingleResponse(response)));
+        .map(SingleResponse::new));
   }
 
   /**
