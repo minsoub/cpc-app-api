@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
-import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.PathMatchConfigurer;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
@@ -32,11 +31,10 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 public class WebFluxConfig implements WebFluxConfigurer {
 
   private final ApplicationProperties applicationProperties;
-  private final Long MAX_AGE_SECS = 3600L;
 
   @Override
   public void configurePathMatching(PathMatchConfigurer configurer) {
-    configurer.addPathPrefix( applicationProperties.getPrefix() + applicationProperties.getVersion()
+    configurer.addPathPrefix( applicationProperties.getPrefix() + applicationProperties.getVersion() + applicationProperties.getProject()
         , (path) -> Arrays
             .stream(applicationProperties.getExcludePrefixPath())
             .anyMatch(p -> !(path.getName().indexOf(p) > 0))
@@ -70,15 +68,5 @@ public class WebFluxConfig implements WebFluxConfigurer {
   @Bean
   public ModelResolver modelResolver(ObjectMapper objectMapper) {
     return new ModelResolver(objectMapper);
-  }
-
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**")
-        .allowedOrigins("http://localhost:3000", "http://10.60.1.57:3000")
-        .allowedHeaders("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-        .allowedHeaders("*")
-        .allowCredentials(true)
-        .maxAge(MAX_AGE_SECS);
   }
 }

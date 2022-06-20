@@ -11,6 +11,7 @@ spring:
 application:
   version: /v1
   prefix: /api
+  project: /cpc
   exclude-prefix-path: springdoc
 
 management:
