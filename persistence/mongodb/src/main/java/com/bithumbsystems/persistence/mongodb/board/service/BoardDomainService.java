@@ -47,4 +47,17 @@ public class BoardDomainService {
   public Mono<Board> getBoardData(Long boardId) {
     return boardRepository.findById(boardId);
   }
+
+  /**
+   * 조회 수 증가
+   * @param boardId 게시글 ID
+   * @return
+   */
+  public Mono<Board> incrementReadCount(Long boardId) {
+    return boardRepository.findById(boardId)
+        .flatMap(board -> {
+          board.setReadCount(board.getReadCount() + 1);
+          return boardRepository.save(board);
+        });
+  }
 }

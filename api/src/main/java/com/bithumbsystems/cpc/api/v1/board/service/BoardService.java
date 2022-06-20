@@ -61,6 +61,7 @@ public class BoardService {
    * @return
    */
   public Mono<BoardResponse> getBoardData(Long boardId) {
-    return boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto);
+    return boardDomainService.incrementReadCount(boardId)
+        .flatMap(board -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto));
   }
 }
