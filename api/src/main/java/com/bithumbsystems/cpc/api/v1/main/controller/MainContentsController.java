@@ -58,6 +58,6 @@ public class MainContentsController {
             .investmentGuide3Id(tuple.getT1().getInvestmentGuide3Id())
             .investmentGuide3(tuple.getT4())
             .build()))
-        .map(response -> new SingleResponse(response)));
+        .map(SingleResponse::new));
   }
 }

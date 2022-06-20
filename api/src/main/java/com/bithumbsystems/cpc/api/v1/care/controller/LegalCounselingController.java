@@ -37,6 +37,6 @@ public class LegalCounselingController {
   public ResponseEntity<Mono<?>> applyLegalCounseling(@RequestPart(value = "legalCounselingRequest") LegalCounselingRequest legalCounselingRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 
-    return ResponseEntity.ok().body(legalCounselingService.saveAll(filePart, legalCounselingRequest).map(c -> new SingleResponse(c)));
+    return ResponseEntity.ok().body(legalCounselingService.saveAll(filePart, legalCounselingRequest).map(SingleResponse::new));
   }
 }

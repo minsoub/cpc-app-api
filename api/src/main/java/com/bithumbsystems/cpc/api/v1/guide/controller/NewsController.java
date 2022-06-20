@@ -37,6 +37,6 @@ public class NewsController {
     log.info("keyword: {}", keyword);
     return ResponseEntity.ok().body(newsService.getNewsList(keyword)
         .collectList()
-        .map(newsResponseList -> new MultiResponse(newsResponseList)));
+        .map(MultiResponse::new));
   }
 }

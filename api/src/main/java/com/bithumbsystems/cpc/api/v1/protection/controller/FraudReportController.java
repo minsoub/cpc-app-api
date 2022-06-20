@@ -37,6 +37,6 @@ public class FraudReportController {
   public ResponseEntity<Mono<?>> createFraudReport(@RequestPart(value = "fraudReportRequest") FraudReportRequest fraudReportRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 
-    return ResponseEntity.ok().body(fraudReportService.saveAll(filePart, fraudReportRequest).map(c -> new SingleResponse(c)));
+    return ResponseEntity.ok().body(fraudReportService.saveAll(filePart, fraudReportRequest).map(SingleResponse::new));
   }
 }

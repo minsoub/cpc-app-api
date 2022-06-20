@@ -1,7 +1,7 @@
 package com.bithumbsystems.cpc.api.v1.board.controller;
 
-import static com.bithumbsystems.cpc.api.core.util.PageSupport.DEFAULT_PAGE_SIZE;
-import static com.bithumbsystems.cpc.api.core.util.PageSupport.FIRST_PAGE_NUM;
+import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.DEFAULT_PAGE_SIZE;
+import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.FIRST_PAGE_NUM;
 
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.board.service.BoardService;
@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,7 @@ public class BoardController {
   @Operation(description = "게시판 마스터 정보 조회")
   public ResponseEntity<Mono<?>> getBoardMasterInfo(@PathVariable String boardMasterId) {
     return ResponseEntity.ok().body(boardService.getBoardMasterInfo(boardMasterId)
-        .map(response -> new SingleResponse(response))
+        .map(SingleResponse::new)
     );
   }
 
@@ -58,9 +59,9 @@ public class BoardController {
   public ResponseEntity<Mono<?>> getBoards(
       @PathVariable String boardMasterId,
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
-      @RequestParam(name = "categoryParam", required = false) String categoryParam,
-      @RequestParam(name = "pageNo", defaultValue = FIRST_PAGE_NUM) int pageNo,
-      @RequestParam(name = "pageSize", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
+      @RequestParam(name = "category_param", required = false) String categoryParam,
+      @RequestParam(name = "page_no", defaultValue = FIRST_PAGE_NUM) int pageNo,
+      @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
     log.info("keyword: {}", keyword);
@@ -71,8 +72,8 @@ public class BoardController {
     }
     log.debug("categories: {}", categories);
 
-    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize))
-        .map(response -> new SingleResponse(response)));
+    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
+        .map(SingleResponse::new));
   }
 
   /**
@@ -85,6 +86,6 @@ public class BoardController {
   @Operation(description = "게시글 조회")
   public ResponseEntity<Mono<?>> getBoardData(@PathVariable String boardMasterId, @PathVariable Long boardId) {
     return ResponseEntity.ok().body(boardService.getBoardData(boardId)
-        .map(response -> new SingleResponse(response)));
+        .map(SingleResponse::new));
   }
 }

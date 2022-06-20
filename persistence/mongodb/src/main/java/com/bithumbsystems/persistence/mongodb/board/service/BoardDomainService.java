@@ -2,11 +2,13 @@ package com.bithumbsystems.persistence.mongodb.board.service;
 
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import com.bithumbsystems.persistence.mongodb.board.model.entity.BoardMaster;
+import com.bithumbsystems.persistence.mongodb.board.repository.BoardCustomRepository;
 import com.bithumbsystems.persistence.mongodb.board.repository.BoardMasterRepository;
 import com.bithumbsystems.persistence.mongodb.board.repository.BoardRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,6 +20,7 @@ public class BoardDomainService {
 
   private final BoardMasterRepository boardMasterRepository;
   private final BoardRepository boardRepository;
+  private final BoardCustomRepository boardCustomRepository;
 
   /**
    * 게시판 마스터 조회
@@ -32,11 +35,22 @@ public class BoardDomainService {
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
    * @param keyword 키워드
+   * @param categories 카테고리
    * @return
    */
-  public Flux<Board> getBoards(String boardMasterId, String keyword, List<String> categories) {
-    Boolean isUse = true;
-    return boardRepository.findByConditionWithCategory(boardMasterId, isUse, keyword, categories);
+  public Flux<Board> findPageBySearchText(String boardMasterId, String keyword, List<String> categories, Pageable pageable) {
+    return boardCustomRepository.findPageBySearchText(boardMasterId, keyword, categories, pageable);
+  }
+
+  /**
+   * 게시글 목록 조회
+   * @param boardMasterId 게시판 ID
+   * @param keyword 키워드
+   * @param categories 카테고리
+   * @return
+   */
+  public Mono<Long> countBySearchText(String boardMasterId, String keyword, List<String> categories) {
+    return boardCustomRepository.countBySearchText(boardMasterId, keyword, categories);
   }
 
   /**
