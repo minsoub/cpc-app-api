@@ -1,6 +1,5 @@
 server:
   shutdown: graceful
-  port: 8083
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -41,6 +40,8 @@ logging:
         cloud: INFO
 
 ---
+server:
+  port: 8083
 spring:
   config:
     import: classpath:aws-properties.yml, classpath:springdoc.yml
@@ -59,6 +60,8 @@ logging:
 
 
 ---
+server:
+  port: 80
 spring:
   config:
     import: classpath:aws-properties-dev.yml, classpath:springdoc.yml
@@ -67,6 +70,8 @@ spring:
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
+server:
+  port: 80
 spring:
   config:
     import: classpath:aws-properties-eks-dev.yml, classpath:springdoc.yml
@@ -75,7 +80,8 @@ spring:
 logging:
   config: classpath:logback-spring-dev.xml
 ---
-
+server:
+  port: 80
 spring:
   config:
     import: classpath:aws-properties.yml
