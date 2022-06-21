@@ -40,8 +40,13 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
               .andOperator(
                   where("board_master_id").is(boardMasterId),
                   where("is_use").is(true),
-                  where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
-                  where("category").in(categories)
+                  where("category").in(categories),
+                  new Criteria()
+                      .orOperator(
+                          where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                          where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                          where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+                      )
               )
       );
     } else {
@@ -50,7 +55,12 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
               .andOperator(
                   where("board_master_id").is(boardMasterId),
                   where("is_use").is(true),
-                  where("title").regex(".*" + keyword.toLowerCase() + ".*", "i")
+                  new Criteria()
+                      .orOperator(
+                          where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                          where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                          where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+                      )
               )
       );
     }

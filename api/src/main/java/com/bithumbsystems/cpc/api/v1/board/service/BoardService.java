@@ -40,7 +40,7 @@ public class BoardService {
    */
   public Mono<Page<BoardResponse>> getBoards(String boardMasterId, String keyword, List<String> categories, PageRequest pageRequest) {
     return boardDomainService.findPageBySearchText(boardMasterId, keyword, categories, pageRequest)
-        .map((BoardMapper.INSTANCE::toDto))
+        .map(BoardMapper.INSTANCE::toDto)
         .collectList()
         .zipWith(boardDomainService.countBySearchText(boardMasterId, keyword, categories)
             .map(c -> c))
