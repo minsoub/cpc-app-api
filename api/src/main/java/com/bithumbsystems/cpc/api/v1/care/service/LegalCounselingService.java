@@ -26,7 +26,6 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -50,12 +49,12 @@ public class LegalCounselingService {
    * @return
    */
   @Transactional
-  public Mono<LegalCounseling> applyLegalCounseling(FilePart filePart, LegalCounselingRequest legalCounselingRequest) {
+  public Mono<Void> applyLegalCounseling(FilePart filePart, LegalCounselingRequest legalCounselingRequest) {
     LegalCounseling legalCounseling = LegalCounselingMapper.INSTANCE.toEntity(legalCounselingRequest);
     legalCounseling.setStatus(legalCounseling.getAnswerToContacts() ? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
 
     if (filePart == null) {
-      return legalCounselingDomainService.createLegalCounseling(legalCounseling);
+      return legalCounselingDomainService.createLegalCounseling(legalCounseling).then();
     } else {
       String fileKey = UUID.randomUUID().toString();
       legalCounseling.setAttachFileId(fileKey);
@@ -81,7 +80,8 @@ public class LegalCounselingService {
                   })
           )
           .log()
-          .map(Tuple2::getT1);
+//          .map(Tuple2::getT1);
+          .then();
     }
   }
 
