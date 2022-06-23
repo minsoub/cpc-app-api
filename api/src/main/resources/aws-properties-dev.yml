@@ -16,4 +16,3 @@ cloud:
       prefix: /smartadmin
       doc-name: docdb
       kms-name: kms
-      message-name: message
