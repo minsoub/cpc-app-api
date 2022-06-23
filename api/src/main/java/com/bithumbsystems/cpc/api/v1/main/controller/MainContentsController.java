@@ -23,40 +23,21 @@ public class MainContentsController {
   private final MainContentsService mainContentsService;
 
   /**
-   * 메인화면 뉴스 선택된 컨텐츠 조회
-   * @return
-   */
-  @GetMapping(value = "/news")
-  @Operation(description = "메인화면 뉴스 컨텐츠 조회")
-  public ResponseEntity<Mono<?>> getMainNews() {
-    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getMainContents(),
-            mainContentsService.getVirtualAssetTrends(),
-            mainContentsService.getBlockchainNews())
-        .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
-            .virtualAssetTrends(tuple.getT2())
-            .blockchainNews(tuple.getT3())
-            .build()))
-        .map(SingleResponse::new));
-  }
-
-  /**
    * 메인화면 하단 선택된 컨텐츠 조회
    * @return
    */
   @GetMapping(value = "/contents")
   @Operation(description = "메인화면 선택된 컨텐츠 조회")
   public ResponseEntity<Mono<?>> getMainContents() {
-    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getMainContents(),
-            mainContentsService.getInvestmentGuide1(),
-            mainContentsService.getInvestmentGuide2(),
-            mainContentsService.getInvestmentGuide3())
+    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getVirtualAssetBasic(),
+            mainContentsService.getInsightColumn(),
+            mainContentsService.getVirtualAssetTrends(),
+            mainContentsService.getBlockchainNews())
         .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
-            .investmentGuide1Id(tuple.getT1().getInvestmentGuide1Id())
-            .investmentGuide1(tuple.getT2())
-            .investmentGuide2Id(tuple.getT1().getInvestmentGuide2Id())
-            .investmentGuide2(tuple.getT3())
-            .investmentGuide3Id(tuple.getT1().getInvestmentGuide3Id())
-            .investmentGuide3(tuple.getT4())
+            .virtualAssetBasic(tuple.getT1())
+            .insightColumn(tuple.getT2())
+            .virtualAssetTrends(tuple.getT3())
+            .blockchainNews(tuple.getT4())
             .build()))
         .map(SingleResponse::new));
   }

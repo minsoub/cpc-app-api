@@ -13,13 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class MainContentsResponse {
-
+  private List<BoardResponse> virtualAssetBasic;
+  private List<BoardResponse> insightColumn;
   private List<BoardResponse> virtualAssetTrends;
   private List<NewsResponse> blockchainNews;
-  private String investmentGuide1Id;
-  private List<BoardResponse> investmentGuide1;
-  private String investmentGuide2Id;
-  private List<BoardResponse> investmentGuide2;
-  private String investmentGuide3Id;
-  private List<BoardResponse> investmentGuide3;
 }

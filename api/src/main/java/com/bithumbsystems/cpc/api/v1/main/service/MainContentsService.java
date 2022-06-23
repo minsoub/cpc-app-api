@@ -25,11 +25,27 @@ public class MainContentsService {
   private final NewsDomainService newsDomainService;
 
   /**
-   * 메인 컨텐츠 조회
+   * 가상 자산 기초 조회
    * @return
    */
-  public Mono<MainContents> getMainContents() {
-    return mainContentsDomainService.findOne();
+  public Mono<List<BoardResponse>> getVirtualAssetBasic() {
+    return mainContentsDomainService.findOne()
+        .map(MainContents::getVirtualAssetBasic)
+        .flatMapMany(it -> Flux.fromIterable(it))
+        .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
+        .collectList();
+  }
+
+  /**
+   * 인사이트 칼럼 조회
+   * @return
+   */
+  public Mono<List<BoardResponse>> getInsightColumn() {
+    return mainContentsDomainService.findOne()
+        .map(MainContents::getInsightColumn)
+        .flatMapMany(it -> Flux.fromIterable(it))
+        .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
+        .collectList();
   }
 
   /**
@@ -53,42 +69,6 @@ public class MainContentsService {
         .map(MainContents::getBlockchainNews)
         .flatMapMany(it -> Flux.fromIterable(it))
         .concatMap(boardId -> newsDomainService.getNewsData(boardId).map(NewsMapper.INSTANCE::toDto))
-        .collectList();
-  }
-
-  /**
-   * 투자 가이드 1 조회
-   * @return
-   */
-  public Mono<List<BoardResponse>> getInvestmentGuide1() {
-    return mainContentsDomainService.findOne()
-        .map(MainContents::getInvestmentGuide1)
-        .flatMapMany(it -> Flux.fromIterable(it))
-        .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
-        .collectList();
-  }
-
-  /**
-   * 투자 가이드 2 조회
-   * @return
-   */
-  public Mono<List<BoardResponse>> getInvestmentGuide2() {
-    return mainContentsDomainService.findOne()
-        .map(MainContents::getInvestmentGuide2)
-        .flatMapMany(it -> Flux.fromIterable(it))
-        .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
-        .collectList();
-  }
-
-  /**
-   * 투자 가이드 3 조회
-   * @return
-   */
-  public Mono<List<BoardResponse>> getInvestmentGuide3() {
-    return mainContentsDomainService.findOne()
-        .map(MainContents::getInvestmentGuide3)
-        .flatMapMany(it -> Flux.fromIterable(it))
-        .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
         .collectList();
   }
 }

@@ -40,6 +40,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
               .andOperator(
                   where("board_master_id").is(boardMasterId),
                   where("is_use").is(true),
+                  where("is_set_notice").is(false),
                   where("category").in(categories),
                   new Criteria()
                       .orOperator(
@@ -55,6 +56,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
               .andOperator(
                   where("board_master_id").is(boardMasterId),
                   where("is_use").is(true),
+                  where("is_set_notice").is(false),
                   new Criteria()
                       .orOperator(
                           where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),

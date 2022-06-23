@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -40,11 +41,21 @@ public class BoardService {
    */
   public Mono<Page<BoardResponse>> getBoards(String boardMasterId, String keyword, List<String> categories, PageRequest pageRequest) {
     return boardDomainService.findPageBySearchText(boardMasterId, keyword, categories, pageRequest)
-        .map(BoardMapper.INSTANCE::toDto)
-        .collectList()
-        .zipWith(boardDomainService.countBySearchText(boardMasterId, keyword, categories)
-            .map(c -> c))
-        .map(t -> new PageImpl<>(t.getT1(), pageRequest, t.getT2()));
+          .map(BoardMapper.INSTANCE::toDto)
+          .collectList()
+          .zipWith(boardDomainService.countBySearchText(boardMasterId, keyword, categories)
+              .map(c -> c))
+          .map(t -> new PageImpl<>(t.getT1(), pageRequest, t.getT2()));
+  }
+
+  /**
+   * 공지 고정 게시글 조회
+   * @param boardMasterId
+   * @return
+   */
+  public Flux<BoardResponse> getNoticeBoards(String boardMasterId) {
+    return boardDomainService.getNoticeBoards(boardMasterId)
+        .map(BoardMapper.INSTANCE::toDto);
   }
 
   /**

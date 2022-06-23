@@ -44,7 +44,7 @@ public class BoardDomainService {
   }
 
   /**
-   * 게시글 목록 조회
+   * 게시글 목록 건수 조회
    * @param boardMasterId 게시판 ID
    * @param keyword 키워드
    * @param categories 카테고리
@@ -52,6 +52,15 @@ public class BoardDomainService {
    */
   public Mono<Long> countBySearchText(String boardMasterId, String keyword, List<String> categories) {
     return boardCustomRepository.countBySearchText(boardMasterId, keyword, categories);
+  }
+
+  /**
+   * 공지 고정 게시글 조회
+   * @param boardMasterId
+   * @return
+   */
+  public Flux<Board> getNoticeBoards(String boardMasterId) {
+    return boardRepository.findALLByIsSetNotice(boardMasterId);
   }
 
   /**

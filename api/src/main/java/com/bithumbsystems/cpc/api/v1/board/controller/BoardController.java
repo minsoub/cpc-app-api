@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.board.controller;
 import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.DEFAULT_PAGE_SIZE;
 import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.FIRST_PAGE_NUM;
 
+import com.bithumbsystems.cpc.api.core.model.response.MultiResponse;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,6 +75,20 @@ public class BoardController {
 
     return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
         .map(SingleResponse::new));
+  }
+
+  /**
+   * 공지 고정 게시글 조회
+   * @param boardMasterId 게시판 ID
+   * @return
+   */
+  @GetMapping("/{boardMasterId}/notice")
+  @Operation(description = "공지 고정 게시글 조회")
+  public ResponseEntity<Mono<?>> getNoticeBoards(@PathVariable String boardMasterId) {
+    return ResponseEntity.ok().body(boardService.getNoticeBoards(boardMasterId)
+        .collectList()
+        .map(MultiResponse::new)
+    );
   }
 
   /**
