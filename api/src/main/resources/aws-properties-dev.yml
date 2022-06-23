@@ -14,18 +14,6 @@ cloud:
       enabled: true
       fail-fast: true
       prefix: /smartadmin
-      name: docdb
-
-logging:
-  level:
-    root: ${cpc.api.logging.level.root:DEBUG}
-    org.springframework.data.convert.CustomConversions: ERROR
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              MongoTemplate: ${cpc.api.logging.level.mongo:INFO}
-    io:
-      spring:
-        cloud: INFO
+      doc-name: docdb
+      kms-name: kms
+      message-name: message

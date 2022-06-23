@@ -3,14 +3,16 @@ cloud:
     credentials:
       profile-name: ${aws.default.profile:dev}
     stack:
-      auto: ${management.aws.stack.auto:false}
+      auto: ${aws.stack.auto:false}
     s3:
-      bucket: ${management.aws.s3.bucket:cpc-dev-bucket}
+      bucket: ${aws.s3.bucket:cpc-dev-bucket}
     region:
-      static: ${management.aws.region:ap-northeast-2}
-      auto: ${management.aws.region.auto:false}
+      static: ${aws.region:ap-northeast-2}
+      auto: ${aws.region.auto:false}
     param-store:
       enabled: true
       fail-fast: true
       prefix: /smartadmin
-      name: docdb
+      doc-name: docdb
+      kms-name: kms
+      message-name: message

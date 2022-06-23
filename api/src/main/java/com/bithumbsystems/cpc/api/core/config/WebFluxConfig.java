@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -51,16 +53,22 @@ public class WebFluxConfig implements WebFluxConfigurer {
   @Primary
   public ObjectMapper objectMapper() {
     JavaTimeModule module = new JavaTimeModule();
-    LocalDateTimeSerializer localDateTimeSerializer = new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
-    LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+    LocalDateTimeSerializer localDateTimeSerializer = new LocalDateTimeSerializer(
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     module.addSerializer(LocalDateTime.class, localDateTimeSerializer);
     module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
 
+    SimpleModule simpleModule = new SimpleModule();
+    StringDeserializer stringDeserializer = new StringDeserializer();
+    simpleModule.addDeserializer(String.class, stringDeserializer);
+
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(module);
+    objectMapper.registerModule(simpleModule);
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE); // snake case 로 변환
     return objectMapper;
   }
