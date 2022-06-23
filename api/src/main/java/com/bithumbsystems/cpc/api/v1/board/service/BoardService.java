@@ -25,10 +25,11 @@ public class BoardService {
   /**
    * 게시판 마스터 정보 조회
    * @param boardMasterId 게시판 ID
+   * @param siteId 싸이트 ID
    * @return
    */
-  public Mono<BoardMasterResponse> getBoardMasterInfo(String boardMasterId) {
-    return boardDomainService.getBoardMasterInfo(boardMasterId).map(BoardMasterMapper.INSTANCE::toDto);
+  public Mono<BoardMasterResponse> getBoardMasterInfo(String boardMasterId, String siteId) {
+    return boardDomainService.getBoardMasterInfo(boardMasterId, siteId).map(BoardMasterMapper.INSTANCE::toDto);
   }
 
   /**

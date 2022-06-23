@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,12 +38,13 @@ public class BoardController {
   /**
    * 게시판 마스터 정보 조회
    * @param boardMasterId 게시판 ID
+   * @param siteId 싸이트 ID
    * @return
    */
   @GetMapping("/{boardMasterId}/info")
   @Operation(description = "게시판 마스터 정보 조회")
-  public ResponseEntity<Mono<?>> getBoardMasterInfo(@PathVariable String boardMasterId) {
-    return ResponseEntity.ok().body(boardService.getBoardMasterInfo(boardMasterId)
+  public ResponseEntity<Mono<?>> getBoardMasterInfo(@PathVariable String boardMasterId, @RequestHeader(value = "site_id") String siteId) {
+    return ResponseEntity.ok().body(boardService.getBoardMasterInfo(boardMasterId, siteId)
         .map(SingleResponse::new)
     );
   }
