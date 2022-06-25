@@ -15,7 +15,7 @@ public enum ErrorCode {
   FAIL_DELETE_CONTENT("F007","cannot delete content"),
   DUPLICATE_KEY_ERROR("F008", "duplicate key error"),
   TIMEOUT_ERROR("F009", "timeout error"),
-  FAIL_SEND_MAIL("M411","FAIL_SEND_MAIL");
+  INVALID_INPUT_VALUE("F010", "invalid input value");
 
   private final String code;
   private final String message;

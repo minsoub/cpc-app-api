@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.validation.constraints.AssertTrue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -49,12 +50,15 @@ public class LegalCounselingService {
    * @return
    */
   @Transactional
+  @AssertTrue
   public Mono<Void> applyLegalCounseling(FilePart filePart, LegalCounselingRequest legalCounselingRequest) {
     LegalCounseling legalCounseling = LegalCounselingMapper.INSTANCE.toEntity(legalCounselingRequest);
     legalCounseling.setStatus(legalCounseling.getAnswerToContacts() ? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
 
     if (filePart == null) {
-      return legalCounselingDomainService.createLegalCounseling(legalCounseling).then();
+      return legalCounselingDomainService.createLegalCounseling(legalCounseling)
+          .switchIfEmpty(Mono.error(new LegalCounselingException(ErrorCode.FAIL_CREATE_CONTENT)))
+          .then();
     } else {
       String fileKey = UUID.randomUUID().toString();
       legalCounseling.setAttachFileId(fileKey);
@@ -79,8 +83,7 @@ public class LegalCounselingService {
                         });
                   })
           )
-          .log()
-//          .map(Tuple2::getT1);
+          .switchIfEmpty(Mono.error(new LegalCounselingException(ErrorCode.FAIL_CREATE_CONTENT)))
           .then();
     }
   }
