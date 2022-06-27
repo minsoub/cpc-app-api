@@ -19,5 +19,6 @@ public class BoardResponse {
   private String thumbnail;
   private String description;
   private String category;
+  private String contributor;
   private LocalDateTime createDate;
 }
