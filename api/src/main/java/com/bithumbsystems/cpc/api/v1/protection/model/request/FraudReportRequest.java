@@ -2,7 +2,6 @@ package com.bithumbsystems.cpc.api.v1.protection.model.request;
 
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationGroups;
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FraudReportRequest {
   @NotBlank(message="이메일은 필수 입력 값입니다.", groups = ValidationGroups.NotEmptyGroup.class)
-  @Email(message = "이메일 형식에 맞지 않습니다.", groups = ValidationGroups.PatternCheckGroup.class)
   private String email;
 
   @NotBlank(message="제목은 필수 입력 값입니다.", groups = ValidationGroups.NotEmptyGroup.class)

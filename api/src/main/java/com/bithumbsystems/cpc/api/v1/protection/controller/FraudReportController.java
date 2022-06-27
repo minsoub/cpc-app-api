@@ -1,10 +1,13 @@
 package com.bithumbsystems.cpc.api.v1.protection.controller;
 
+import static com.bithumbsystems.cpc.api.core.util.AES256Util.CLIENT_AES_KEY_CPC;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationSequence;
+import com.bithumbsystems.cpc.api.core.util.AES256Util;
+import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.protection.model.request.FraudReportRequest;
 import com.bithumbsystems.cpc.api.v1.protection.service.FraudReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +42,16 @@ public class FraudReportController {
   public ResponseEntity<Mono<?>> createFraudReport(@Validated(ValidationSequence.class) @RequestPart(value = "fraudReportRequest") FraudReportRequest fraudReportRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 
-    return ResponseEntity.ok().body(fraudReportService.createFraudReport(filePart, fraudReportRequest)
-        .then(Mono.just(new SingleResponse())));
+    return ResponseEntity.ok().body(Mono.just(fraudReportRequest)
+            .flatMap(request -> {
+              // 1. 개인정보 복호화
+              request.setEmail(AES256Util.decryptAES(CLIENT_AES_KEY_CPC, request.getEmail()));
+              log.debug("email : {}", request.getEmail());
+              // 2. 유효성 검증
+              ValidationUtils.assertEmailFormat(request.getEmail());
+
+              return fraudReportService.createFraudReport(filePart, request);
+            })
+            .then(Mono.just(new SingleResponse())));
   }
 }

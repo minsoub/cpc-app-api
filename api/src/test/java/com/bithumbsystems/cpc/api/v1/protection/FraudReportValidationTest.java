@@ -1,8 +1,12 @@
 package com.bithumbsystems.cpc.api.v1.protection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationGroups;
+import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.protection.model.request.FraudReportRequest;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -63,14 +67,12 @@ public class FraudReportValidationTest {
         .build();
 
     // when
-    Set<ConstraintViolation<FraudReportRequest>> violations = validator.validate(fraudReportRequest,
-        ValidationGroups.PatternCheckGroup.class);
+    Throwable exception = assertThrows(InvalidParameterException.class, () -> {
+        ValidationUtils.assertEmailFormat(fraudReportRequest.getEmail());
+    });
 
     // then
-    assertThat(violations).isNotEmpty();
-    violations.forEach(error -> {
-      assertThat(error.getMessage()).isEqualTo("이메일 형식에 맞지 않습니다.");
-    });
+    assertEquals("invalid email format", exception.getMessage());
   }
 
   @DisplayName("제목 입력 길이 초과된 경우 에러 발생")
