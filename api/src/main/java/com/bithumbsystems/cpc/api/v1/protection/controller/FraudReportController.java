@@ -38,7 +38,7 @@ public class FraudReportController {
    * @return
    */
   @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
-  @Operation(description = "사기 신고 등록")
+  @Operation(summary = "사기 신고 등록", description = "투자자 보호 > 사기 신고: 사기 신고 등록", tags = "투자자 보호 > 사기 신고")
   public ResponseEntity<Mono<?>> createFraudReport(@Validated(ValidationSequence.class) @RequestPart(value = "fraudReportRequest") FraudReportRequest fraudReportRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 

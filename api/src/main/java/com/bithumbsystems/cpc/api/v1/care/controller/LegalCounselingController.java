@@ -38,7 +38,7 @@ public class LegalCounselingController {
    * @return
    */
   @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
-  @Operation(description = "법률 상담 등록")
+  @Operation(summary = "법률 상담 신청", description = "케어 프로그램 > 법률상담: 법률 상담 신청", tags = "케어 프로그램 > 법률상담")
   public ResponseEntity<Mono<?>> applyLegalCounseling(@Validated(ValidationSequence.class) @RequestPart(value = "legalCounselingRequest") LegalCounselingRequest legalCounselingRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
 

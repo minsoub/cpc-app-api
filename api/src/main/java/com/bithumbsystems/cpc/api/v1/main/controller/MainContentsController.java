@@ -27,7 +27,7 @@ public class MainContentsController {
    * @return
    */
   @GetMapping(value = "/contents")
-  @Operation(description = "메인화면 선택된 컨텐츠 조회")
+  @Operation(summary = "메인화면 선택된 컨텐츠 조회", description = "메인화면 > 하단 투자가이드 탭: 선택된 컨텐츠 조회", tags = "메인화면 > 하단 투자가이드 탭")
   public ResponseEntity<Mono<?>> getMainContents() {
     return ResponseEntity.ok().body(Mono.zip(mainContentsService.getVirtualAssetBasic(),
             mainContentsService.getInsightColumn(),

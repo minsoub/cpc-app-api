@@ -42,7 +42,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}/info")
-  @Operation(description = "게시판 마스터 정보 조회")
+  @Operation(summary = "게시판 마스터 정보 조회", description = "게시판 설정 정보를 가진 마스터 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoardMasterInfo(@PathVariable String boardMasterId, @RequestHeader(value = "site_id") String siteId) {
     return ResponseEntity.ok().body(boardService.getBoardMasterInfo(boardMasterId, siteId)
         .map(SingleResponse::new)
@@ -58,7 +58,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}")
-  @Operation(description = "게시글 목록 조회")
+  @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 페이지 단위로 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoards(
       @PathVariable String boardMasterId,
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
@@ -85,7 +85,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}/notices")
-  @Operation(description = "공지 고정 게시글 조회")
+  @Operation(summary = "공지 고정 게시글 조회", description = "공지형 게시판의 경우 사용하는 상단 고정 게시글 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getNoticeBoards(@PathVariable String boardMasterId) {
     return ResponseEntity.ok().body(boardService.getNoticeBoards(boardMasterId)
         .collectList()
@@ -100,7 +100,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}/{boardId}")
-  @Operation(description = "게시글 조회")
+  @Operation(summary = "게시글 조회", description = "게시글 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoardData(@PathVariable String boardMasterId, @PathVariable Long boardId) {
     return ResponseEntity.ok().body(boardService.getBoardData(boardId)
         .map(SingleResponse::new));

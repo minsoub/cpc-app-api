@@ -36,7 +36,7 @@ public class NewsController {
    * @return
    */
   @GetMapping
-  @Operation(description = "블록체인 뉴스 목록 조회")
+  @Operation(summary = "블록체인 뉴스 목록 조회", description = "투자 가이드 > 블록체인 뉴스: 블록체인 뉴스 목록을 페이지 단위로 조회", tags = "투자 가이드 > 블록체인 뉴스")
   public ResponseEntity<Mono<?>> getNewsList(@RequestParam(name = "query", required = false, defaultValue = "") String query,
       @RequestParam(name = "page_no", defaultValue = FIRST_PAGE_NUM) int pageNo,
       @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
@@ -53,7 +53,7 @@ public class NewsController {
    * @return
    */
   @GetMapping(value = "/{id}")
-  @Operation(description = "블록체인 뉴스 조회 수 증가")
+  @Operation(summary = "블록체인 뉴스 조회 수 증가", description = "투자 가이드 > 블록체인 뉴스: 블록체인 뉴스 조회 수 증가", tags = "투자 가이드 > 블록체인 뉴스")
   public ResponseEntity<Mono<?>> incrementReadCount(@PathVariable(name = "id") Long id) {
     return ResponseEntity.ok().body(newsService.incrementReadCount(id)
         .then(Mono.just(new SingleResponse())));
