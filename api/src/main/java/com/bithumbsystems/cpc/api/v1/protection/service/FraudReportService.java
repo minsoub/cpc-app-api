@@ -2,6 +2,7 @@ package com.bithumbsystems.cpc.api.v1.protection.service;
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.util.AES256Util;
 import com.bithumbsystems.cpc.api.v1.care.model.enums.Status;
 import com.bithumbsystems.cpc.api.v1.protection.exception.FraudReportException;
 import com.bithumbsystems.cpc.api.v1.protection.mapper.FraudReportMapper;
@@ -54,6 +55,7 @@ public class FraudReportService {
   public Mono<Void> createFraudReport(FilePart filePart, FraudReportRequest fraudReportRequest) {
     FraudReport fraudReport = FraudReportMapper.INSTANCE.toEntity(fraudReportRequest);
     fraudReport.setStatus(fraudReport.getAnswerToContacts()? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
+    fraudReport.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), fraudReportRequest.getEmail(), true)); // DB 암호화
 
     if (filePart == null) {
       return fraudReportDomainService.createFraudReport(fraudReport)
