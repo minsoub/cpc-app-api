@@ -29,14 +29,14 @@ public class MainContentsController {
   @GetMapping(value = "/contents")
   @Operation(summary = "메인화면 선택된 컨텐츠 조회", description = "메인화면 > 하단 투자가이드 탭: 선택된 컨텐츠 조회", tags = "메인화면 > 하단 투자가이드 탭")
   public ResponseEntity<Mono<?>> getMainContents() {
-    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getVirtualAssetBasic(),
+    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getDigitalAssetBasic(),
             mainContentsService.getInsightColumn(),
-            mainContentsService.getVirtualAssetTrends(),
+            mainContentsService.getDigitalAssetTrends(),
             mainContentsService.getBlockchainNews())
         .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
-            .virtualAssetBasic(tuple.getT1())
+            .digitalAssetBasic(tuple.getT1())
             .insightColumn(tuple.getT2())
-            .virtualAssetTrends(tuple.getT3())
+            .digitalAssetTrends(tuple.getT3())
             .blockchainNews(tuple.getT4())
             .build()))
         .map(SingleResponse::new));
