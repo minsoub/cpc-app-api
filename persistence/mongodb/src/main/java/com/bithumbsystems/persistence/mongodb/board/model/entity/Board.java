@@ -32,6 +32,7 @@ public class Board {
   private String thumbnail;
   private String description;
   private String category;
+  private String contributor;
   @CreatedDate private LocalDateTime createDate;
   @CreatedBy private String createAccountId;
   @LastModifiedDate private LocalDateTime updateDate;

@@ -28,9 +28,9 @@ public class MainContentsService {
    * 가상 자산 기초 조회
    * @return
    */
-  public Mono<List<BoardResponse>> getVirtualAssetBasic() {
+  public Mono<List<BoardResponse>> getDigitalAssetBasic() {
     return mainContentsDomainService.findOne()
-        .map(MainContents::getVirtualAssetBasic)
+        .map(MainContents::getDigitalAssetBasic)
         .flatMapMany(it -> Flux.fromIterable(it))
         .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
         .collectList();
@@ -52,9 +52,9 @@ public class MainContentsService {
    * 가상 자산 동향 조회
    * @return
    */
-  public Mono<List<BoardResponse>> getVirtualAssetTrends() {
+  public Mono<List<BoardResponse>> getDigitalAssetTrends() {
     return mainContentsDomainService.findOne()
-        .map(MainContents::getVirtualAssetTrends)
+        .map(MainContents::getDigitalAssetTrends)
         .flatMapMany(it -> Flux.fromIterable(it))
         .concatMap(boardId -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
         .collectList();

@@ -42,7 +42,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}/info")
-  @Operation(description = "게시판 마스터 정보 조회")
+  @Operation(summary = "게시판 마스터 정보 조회", description = "게시판 설정 정보를 가진 마스터 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoardMasterInfo(@PathVariable String boardMasterId, @RequestHeader(value = "site_id") String siteId) {
     return ResponseEntity.ok().body(boardService.getBoardMasterInfo(boardMasterId, siteId)
         .map(SingleResponse::new)
@@ -58,11 +58,11 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}")
-  @Operation(description = "게시글 목록 조회")
+  @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 페이지 단위로 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoards(
       @PathVariable String boardMasterId,
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
-      @RequestParam(name = "category_param", required = false) String categoryParam,
+      @RequestParam(name = "category", required = false) String category,
       @RequestParam(name = "page_no", defaultValue = FIRST_PAGE_NUM) int pageNo,
       @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
@@ -70,8 +70,8 @@ public class BoardController {
     log.info("keyword: {}", keyword);
 
     List<String> categories = new ArrayList<String>();
-    if (StringUtils.isNotEmpty(categoryParam)) {
-      categories = Arrays.asList(URLDecoder.decode(categoryParam, "UTF-8").split(";"));
+    if (StringUtils.isNotEmpty(category)) {
+      categories = Arrays.asList(URLDecoder.decode(category, "UTF-8").split(";"));
     }
     log.debug("categories: {}", categories);
 
@@ -84,8 +84,8 @@ public class BoardController {
    * @param boardMasterId 게시판 ID
    * @return
    */
-  @GetMapping("/{boardMasterId}/notice")
-  @Operation(description = "공지 고정 게시글 조회")
+  @GetMapping("/{boardMasterId}/notices")
+  @Operation(summary = "공지 고정 게시글 조회", description = "공지형 게시판의 경우 사용하는 상단 고정 게시글 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getNoticeBoards(@PathVariable String boardMasterId) {
     return ResponseEntity.ok().body(boardService.getNoticeBoards(boardMasterId)
         .collectList()
@@ -100,7 +100,7 @@ public class BoardController {
    * @return
    */
   @GetMapping("/{boardMasterId}/{boardId}")
-  @Operation(description = "게시글 조회")
+  @Operation(summary = "게시글 조회", description = "게시글 정보를 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoardData(@PathVariable String boardMasterId, @PathVariable Long boardId) {
     return ResponseEntity.ok().body(boardService.getBoardData(boardId)
         .map(SingleResponse::new));

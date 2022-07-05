@@ -2,6 +2,7 @@ package com.bithumbsystems.cpc.api.v1.protection.service;
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.util.AES256Util;
 import com.bithumbsystems.cpc.api.v1.care.model.enums.Status;
 import com.bithumbsystems.cpc.api.v1.protection.exception.FraudReportException;
 import com.bithumbsystems.cpc.api.v1.protection.mapper.FraudReportMapper;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.validation.constraints.AssertTrue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -26,7 +28,6 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -50,12 +51,16 @@ public class FraudReportService {
    * @return
    */
   @Transactional
-  public Mono<FraudReport> createFraudReport(FilePart filePart, FraudReportRequest fraudReportRequest) {
+  @AssertTrue
+  public Mono<Void> createFraudReport(FilePart filePart, FraudReportRequest fraudReportRequest) {
     FraudReport fraudReport = FraudReportMapper.INSTANCE.toEntity(fraudReportRequest);
     fraudReport.setStatus(fraudReport.getAnswerToContacts()? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
+    fraudReport.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), fraudReportRequest.getEmail(), true)); // DB 암호화
 
     if (filePart == null) {
-      return fraudReportDomainService.createFraudReport(fraudReport);
+      return fraudReportDomainService.createFraudReport(fraudReport)
+          .switchIfEmpty(Mono.error(new FraudReportException(ErrorCode.FAIL_CREATE_CONTENT)))
+          .then();
     } else {
       String fileKey = UUID.randomUUID().toString();
       fraudReport.setAttachFileId(fileKey);
@@ -80,8 +85,8 @@ public class FraudReportService {
                         });
                   })
           )
-          .log()
-          .map(Tuple2::getT1);
+          .switchIfEmpty(Mono.error(new FraudReportException(ErrorCode.FAIL_CREATE_CONTENT)))
+          .then();
     }
   }
 

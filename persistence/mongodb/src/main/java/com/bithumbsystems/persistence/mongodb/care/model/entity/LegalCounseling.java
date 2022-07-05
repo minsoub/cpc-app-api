@@ -26,10 +26,11 @@ public class LegalCounseling {
   private String contents;
   private String cellPhone;
   private String attachFileId;
-  private Boolean servicePrivacy;
+  private Boolean entrustPrivacy;
   private Boolean termsPrivacy;
   private Boolean answerToContacts;
   private String answer;
+  private Boolean sendToEmail;
   @CreatedDate private LocalDateTime createDate;
   @CreatedBy private String createAccountId;
   @LastModifiedDate private LocalDateTime updateDate;

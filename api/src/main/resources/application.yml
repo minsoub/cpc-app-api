@@ -17,6 +17,8 @@ application:
   prefix: /api
   project: /cpc
   exclude-prefix-path: springdoc
+  role-type: USER
+  site-id: 62a15f4ae4129b518b133128
 
 management:
   endpoints:
@@ -46,7 +48,7 @@ logging:
 
 ---
 server:
-  port: 8083
+  port: 8085
 spring:
   config:
     import: classpath:aws-properties.yml, classpath:springdoc.yml
