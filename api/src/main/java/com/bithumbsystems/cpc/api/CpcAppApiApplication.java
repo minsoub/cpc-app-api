@@ -15,7 +15,12 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 
-@SpringBootApplication(scanBasePackages = "com.bithumbsystems")
+@SpringBootApplication(scanBasePackages = "com.bithumbsystems", exclude = {
+    MongoAutoConfiguration.class,
+    MongoReactiveAutoConfiguration.class,
+    MongoDataAutoConfiguration.class,
+    EmbeddedMongoAutoConfiguration.class
+})
 @EnableWebFlux
 @ConfigurationPropertiesScan("com.bithumbsystems.cpc.api.core.config")
 @EnableReactiveMongoRepositories("com.bithumbsystems.persistence.mongodb")
@@ -25,14 +30,4 @@ public class CpcAppApiApplication {
   public static void main(String[] args) {
     SpringApplication.run(CpcAppApiApplication.class, args);
   }
-
-  @Profile("dev|prod")
-  @EnableAutoConfiguration(
-      exclude = {
-          MongoAutoConfiguration.class,
-          MongoReactiveAutoConfiguration.class,
-          MongoDataAutoConfiguration.class,
-          EmbeddedMongoAutoConfiguration.class
-      })
-  static class WithoutAutoConfigurationMongo{}
 }
