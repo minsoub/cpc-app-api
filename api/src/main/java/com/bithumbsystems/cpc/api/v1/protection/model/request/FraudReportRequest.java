@@ -26,6 +26,9 @@ public class FraudReportRequest {
   private String contents;
 
   @AssertTrue
+  private Boolean entrustPrivacy;
+
+  @AssertTrue
   private Boolean termsPrivacy;
 
   private Boolean answerToContacts;

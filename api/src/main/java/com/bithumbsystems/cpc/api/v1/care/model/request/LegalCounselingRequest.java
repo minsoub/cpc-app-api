@@ -29,7 +29,7 @@ public class LegalCounselingRequest {
   private String contents;
 
   @AssertTrue
-  private Boolean servicePrivacy;
+  private Boolean entrustPrivacy;
 
   @AssertTrue
   private Boolean termsPrivacy;
