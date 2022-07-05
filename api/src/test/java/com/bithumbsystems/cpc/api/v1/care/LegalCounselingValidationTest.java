@@ -42,7 +42,7 @@ public class LegalCounselingValidationTest {
         .email("name@example.com")
         .cellPhone("010-1234-5678")
         .contents("contents")
-        .servicePrivacy(true)
+        .entrustPrivacy(true)
         .termsPrivacy(true)
         .build();
 
@@ -66,7 +66,7 @@ public class LegalCounselingValidationTest {
         .email("name@example.com")
         .cellPhone("010-1234-5678")
         .contents("contents")
-        .servicePrivacy(true)
+        .entrustPrivacy(true)
         .termsPrivacy(true)
         .build();
 
@@ -88,7 +88,7 @@ public class LegalCounselingValidationTest {
         .email("name@")
         .cellPhone("010-1234-5678")
         .contents("contents")
-        .servicePrivacy(true)
+        .entrustPrivacy(true)
         .termsPrivacy(true)
         .build();
 
@@ -110,7 +110,7 @@ public class LegalCounselingValidationTest {
         .email("name@example.com")
         .cellPhone("010-1234-56789")
         .contents("contents")
-        .servicePrivacy(true)
+        .entrustPrivacy(true)
         .termsPrivacy(true)
         .build();
 
@@ -132,7 +132,7 @@ public class LegalCounselingValidationTest {
         .email("name@example.com")
         .cellPhone("010-1234-5678")
         .contents("contents")
-        .servicePrivacy(true)
+        .entrustPrivacy(true)
         .termsPrivacy(true)
         .build();
 
