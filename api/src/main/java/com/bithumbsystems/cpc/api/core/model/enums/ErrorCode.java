@@ -16,9 +16,9 @@ public enum ErrorCode {
   DUPLICATE_KEY_ERROR("F008", "duplicate key error"),
   TIMEOUT_ERROR("F009", "timeout error"),
   INVALID_INPUT_VALUE("F010", "invalid input value"),
-  INVALID_EMAIL_FORMAT("F012", "invalid email format"),
-  INVALID_NAME_FORMAT("F013", "invalid name format"),
-  INVALID_PHONE_FORMAT("F014", "invalid phone format");
+  INVALID_EMAIL_FORMAT("F012", "잘못된 이메일 형식입니다. 이메일 주소를 확인해 주세요."),
+  INVALID_NAME_FORMAT("F013", "이름에는 특수문자를 포함할 수 없습니다."),
+  INVALID_PHONE_FORMAT("F014", "잘못된 휴대폰번호 형식입니다. 휴대폰번호를 확인해 주세요.");
 
   private final String code;
   private final String message;

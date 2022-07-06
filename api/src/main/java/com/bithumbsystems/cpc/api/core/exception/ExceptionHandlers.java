@@ -53,7 +53,7 @@ public class ExceptionHandlers {
 //        .collect(Collectors.toList());
 
     ErrorData errorData = new ErrorData(ErrorCode.INVALID_INPUT_VALUE);
-    return ResponseEntity.internalServerError().body(Mono.just(new ErrorResponse(errorData)));
+    return ResponseEntity.badRequest().body(Mono.just(new ErrorResponse(errorData)));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
@@ -61,6 +61,14 @@ public class ExceptionHandlers {
   public ResponseEntity<Mono<?>> serverExceptionHandler(ConstraintViolationException ex) {
     log.error(ex.getMessage(), ex);
     ErrorData errorData = new ErrorData(ErrorCode.INVALID_INPUT_VALUE);
-    return ResponseEntity.internalServerError().body(Mono.just(new ErrorResponse(errorData)));
+    return ResponseEntity.badRequest().body(Mono.just(new ErrorResponse(errorData)));
+  }
+
+  @ExceptionHandler(InvalidParameterException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<Mono<?>> serverExceptionHandler(InvalidParameterException ex) {
+    log.error(ex.getMessage(), ex);
+    ErrorData errorData = new ErrorData(ex.getErrorCode());
+    return ResponseEntity.badRequest().body(Mono.just(new ErrorResponse(errorData)));
   }
 }
