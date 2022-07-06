@@ -7,7 +7,6 @@ import com.bithumbsystems.cpc.api.core.model.response.MultiResponse;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
-@Tag(name = "Board APIs", description = "게시판 관련 API")
 public class BoardController {
   private final BoardService boardService;
 

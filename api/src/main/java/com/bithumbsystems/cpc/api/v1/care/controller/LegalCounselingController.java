@@ -11,7 +11,6 @@ import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.care.model.request.LegalCounselingRequest;
 import com.bithumbsystems.cpc.api.v1.care.service.LegalCounselingService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/legal-counseling")
 @RequiredArgsConstructor
-@Tag(name = "Legal Counseling APIs", description = "법률 상담 API")
 public class LegalCounselingController {
   private final LegalCounselingService legalCounselingService;
 

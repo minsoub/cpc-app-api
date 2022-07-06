@@ -11,7 +11,6 @@ import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.protection.model.request.FraudReportRequest;
 import com.bithumbsystems.cpc.api.v1.protection.service.FraudReportService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/fraud-report")
 @RequiredArgsConstructor
-@Tag(name = "Fraud Report APIs", description = "사기 신고 API")
 public class FraudReportController {
   private final FraudReportService fraudReportService;
 

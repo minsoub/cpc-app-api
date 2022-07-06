@@ -4,7 +4,6 @@ import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.main.model.response.MainContentsResponse;
 import com.bithumbsystems.cpc.api.v1.main.service.MainContentsService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/main")
 @RequiredArgsConstructor
-@Tag(name = "Main APIs", description = "메인 화면 관련 API")
 public class MainContentsController {
 
   private final MainContentsService mainContentsService;

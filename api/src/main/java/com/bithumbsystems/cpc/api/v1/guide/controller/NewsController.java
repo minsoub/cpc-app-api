@@ -6,7 +6,6 @@ import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.FIR
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.guide.service.NewsService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/news")
 @RequiredArgsConstructor
-@Tag(name = "News APIs", description = "뉴스 관련 API")
 public class NewsController {
 
   private final NewsService newsService;
