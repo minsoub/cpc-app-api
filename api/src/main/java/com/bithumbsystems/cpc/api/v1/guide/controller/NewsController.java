@@ -41,7 +41,7 @@ public class NewsController {
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
     log.info("keyword: {}", keyword);
-    return ResponseEntity.ok().body(newsService.getNewsList(keyword, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
+    return ResponseEntity.ok().body(newsService.getNewsList(keyword, PageRequest.of(pageNo, pageSize, Sort.by("posting_date").descending()))
         .map(SingleResponse::new));
   }
 

@@ -1,6 +1,6 @@
 package com.bithumbsystems.cpc.api.v1.guide.model.response;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class NewsResponse {
   private String newspaper;
   private String thumbnailUrl;
   private String linkUrl;
-  private LocalDateTime createDate;
+  private LocalDate postingDate;
 }

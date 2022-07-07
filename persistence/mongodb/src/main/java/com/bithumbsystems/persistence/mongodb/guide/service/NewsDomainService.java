@@ -3,7 +3,6 @@ package com.bithumbsystems.persistence.mongodb.guide.service;
 import com.bithumbsystems.persistence.mongodb.guide.model.entity.News;
 import com.bithumbsystems.persistence.mongodb.guide.repository.NewsCustomRepository;
 import com.bithumbsystems.persistence.mongodb.guide.repository.NewsRepository;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,7 @@ public class NewsDomainService {
    * @return
    */
   public Flux<News> findPageBySearchText(String keyword, Pageable pageable) {
-    return newsCustomRepository.findPageBySearchText(keyword, LocalDate.now(), pageable);
+    return newsCustomRepository.findPageBySearchText(keyword, pageable);
   }
 
   /**
@@ -34,7 +33,7 @@ public class NewsDomainService {
    * @return
    */
   public Mono<Long> countBySearchText(String keyword) {
-    return newsCustomRepository.countBySearchText(keyword, LocalDate.now());
+    return newsCustomRepository.countBySearchText(keyword);
   }
 
   /**
