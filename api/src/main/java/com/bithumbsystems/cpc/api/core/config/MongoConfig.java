@@ -47,19 +47,11 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     @SneakyThrows
     protected MongoClientSettings configureClientSettings() {
-        MongoCredential credential = MongoCredential.createScramSha1Credential(
-            config.getMongoProperties().getMongodbUser(),
-            config.getMongoProperties().getMongodbName(),
-            config.getMongoProperties().getMongodbPassword().toCharArray()
-        );
-
         return MongoClientSettings.builder()
-            .credential(credential)
             .streamFactoryFactory(NettyStreamFactoryFactory.builder().build())
             .applyConnectionString(getConnectionString())
             .build();
     }
-
     private ConnectionString getConnectionString() {
         String str = String.format("mongodb://%s:%s@%s:%s",
             config.getMongoProperties().getMongodbUser(),
