@@ -2,6 +2,7 @@ package com.bithumbsystems.cpc.api.core.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.connection.netty.NettyStreamFactoryFactory;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
@@ -46,11 +47,19 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     @SneakyThrows
     protected MongoClientSettings configureClientSettings() {
+        MongoCredential credential = MongoCredential.createScramSha1Credential(
+            config.getMongoProperties().getMongodbUser(),
+            config.getMongoProperties().getMongodbName(),
+            config.getMongoProperties().getMongodbPassword().toCharArray()
+        );
+
         return MongoClientSettings.builder()
+            .credential(credential)
             .streamFactoryFactory(NettyStreamFactoryFactory.builder().build())
             .applyConnectionString(getConnectionString())
             .build();
     }
+
     private ConnectionString getConnectionString() {
         String str = String.format("mongodb://%s:%s@%s:%s",
             config.getMongoProperties().getMongodbUser(),
