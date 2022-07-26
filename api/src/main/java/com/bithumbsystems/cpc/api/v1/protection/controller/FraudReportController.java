@@ -48,6 +48,11 @@ public class FraudReportController {
               // 2. 유효성 검증
               ValidationUtils.assertEmailFormat(request.getEmail());
 
+              if (filePart != null) {
+                String[] ALLOW_FILE_EXT = {"PNG", "GIF", "JPG", "JPEG", "PPTX", "XLSX", "DOC", "DOCS"};
+                ValidationUtils.assertAllowFileExt(filePart.filename(), ALLOW_FILE_EXT);
+              }
+
               return fraudReportService.createFraudReport(filePart, request);
             })
             .then(Mono.just(new SingleResponse())));

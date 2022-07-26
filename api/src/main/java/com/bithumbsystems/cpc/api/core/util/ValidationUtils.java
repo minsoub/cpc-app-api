@@ -2,8 +2,10 @@ package com.bithumbsystems.cpc.api.core.util;
 
 import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.util.StringUtils;
 
 public class ValidationUtils {
 
@@ -31,6 +33,14 @@ public class ValidationUtils {
     Matcher matcher = pattern.matcher(value);
     if (!matcher.matches()) {
       throw new InvalidParameterException(ErrorCode.INVALID_PHONE_FORMAT);
+    }
+  }
+
+  public static void assertAllowFileExt(String fileName, String[] allowExt) {
+    String ext = StringUtils.getFilenameExtension(fileName).toUpperCase();
+
+    if(Arrays.asList(allowExt).contains(ext) == false){
+      throw new InvalidParameterException(ErrorCode.NOT_ALLOWED_FILE_EXT);
     }
   }
 }

@@ -18,7 +18,8 @@ public enum ErrorCode {
   INVALID_INPUT_VALUE("F010", "invalid input value"),
   INVALID_EMAIL_FORMAT("F012", "잘못된 이메일 형식입니다. 이메일 주소를 확인해 주세요."),
   INVALID_NAME_FORMAT("F013", "이름에는 특수문자를 포함할 수 없습니다."),
-  INVALID_PHONE_FORMAT("F014", "잘못된 휴대폰번호 형식입니다. 휴대폰번호를 확인해 주세요.");
+  INVALID_PHONE_FORMAT("F014", "잘못된 휴대폰번호 형식입니다. 휴대폰번호를 확인해 주세요."),
+  NOT_ALLOWED_FILE_EXT("F015", "허용되지 않은 파일 확장지입니다. 파일을 확인해 주세요.");
 
   private final String code;
   private final String message;
