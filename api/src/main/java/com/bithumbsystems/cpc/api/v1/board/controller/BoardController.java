@@ -71,7 +71,6 @@ public class BoardController {
     if (StringUtils.isNotEmpty(category)) {
       categories = Arrays.asList(URLDecoder.decode(category, "UTF-8").split(";"));
     }
-    log.debug("categories: {}", categories);
 
     return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
         .map(SingleResponse::new));
