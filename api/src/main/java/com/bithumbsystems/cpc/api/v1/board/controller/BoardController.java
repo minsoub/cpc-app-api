@@ -65,7 +65,7 @@ public class BoardController {
       @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
-    log.info("keyword: {}", keyword);
+    log.info("keyword: {}", keyword.replaceAll("[\r\n]",""));
 
     List<String> categories = new ArrayList<String>();
     if (StringUtils.isNotEmpty(category)) {
