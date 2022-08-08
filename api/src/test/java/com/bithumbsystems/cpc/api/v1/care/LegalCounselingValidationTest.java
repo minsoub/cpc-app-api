@@ -76,7 +76,7 @@ public class LegalCounselingValidationTest {
     }, "예외가 발생하지 않았습니다.");
 
     // then
-    assertEquals("invalid name format", exception.getMessage());
+    assertEquals("이름에는 특수문자를 포함할 수 없습니다.", exception.getMessage());
   }
 
   @DisplayName("이메일 형식 아닌 경우 에러 발생")
@@ -120,7 +120,7 @@ public class LegalCounselingValidationTest {
     }, "예외가 발생하지 않았습니다.");
 
     // then
-    assertEquals("invalid phone format", exception.getMessage());
+    assertEquals("잘못된 휴대폰번호 형식입니다. 휴대폰번호를 확인해 주세요.", exception.getMessage());
   }
 
   @DisplayName("유효성 검사 성공")
