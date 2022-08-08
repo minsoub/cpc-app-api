@@ -98,7 +98,7 @@ public class LegalCounselingValidationTest {
     }, "예외가 발생하지 않았습니다.");
 
     // then
-    assertEquals("invalid email format", exception.getMessage());
+    assertEquals("잘못된 이메일 형식입니다. 이메일 주소를 확인해 주세요.", exception.getMessage());
   }
 
   @DisplayName("전화번호 형식 아닌 경우 에러 발생")
