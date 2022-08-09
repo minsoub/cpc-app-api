@@ -1,5 +1,13 @@
 package com.bithumbsystems.cpc.api.core.config;
 
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.CPC_CRYPT_ALIAS_NAME;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_NAME;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_PASSWORD;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_PORT;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_URL;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_USER;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.KMS_ALIAS_NAME;
+
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.config.property.MongoProperties;
 import javax.annotation.PostConstruct;
@@ -12,8 +20,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
-
-import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.*;
 
 @Log4j2
 @Data
@@ -49,6 +55,7 @@ public class ParameterStoreConfig {
 
         // KMS Parameter Key
         this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName(), KMS_ALIAS_NAME));
+        this.awsProperties.setCpcCryptoKey(getParameterValue(awsProperties.getParamStoreCpcName().trim(), CPC_CRYPT_ALIAS_NAME));
 
     }
 

@@ -138,7 +138,7 @@ public class LegalCounselingService {
             //s3AsyncClient.close();
           }
         }).thenApply(res -> {
-          log.debug("putObject => {}", res);
+//          log.debug("putObject => {}", res);
           return res;
         })
     );

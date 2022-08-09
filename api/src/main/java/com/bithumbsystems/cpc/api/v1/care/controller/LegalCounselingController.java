@@ -1,9 +1,9 @@
 package com.bithumbsystems.cpc.api.v1.care.controller;
 
-import static com.bithumbsystems.cpc.api.core.util.AES256Util.CLIENT_AES_KEY_CPC;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationSequence;
 import com.bithumbsystems.cpc.api.core.util.AES256Util;
@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/legal-counseling")
 @RequiredArgsConstructor
 public class LegalCounselingController {
+  private final AwsProperties awsProperties;
   private final LegalCounselingService legalCounselingService;
 
   /**
@@ -43,9 +44,9 @@ public class LegalCounselingController {
     return ResponseEntity.ok().body(Mono.just(legalCounselingRequest)
         .flatMap(request -> {
           // 1. 개인정보 복호화
-          request.setName(AES256Util.decryptAES(CLIENT_AES_KEY_CPC, request.getName()));
-          request.setEmail(AES256Util.decryptAES(CLIENT_AES_KEY_CPC, request.getEmail()));
-          request.setCellPhone(AES256Util.decryptAES(CLIENT_AES_KEY_CPC, request.getCellPhone()));
+          request.setName(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getName()));
+          request.setEmail(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getEmail()));
+          request.setCellPhone(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getCellPhone()));
 
           // 2. 유효성 검증
           ValidationUtils.assertNameFormat(request.getName());
