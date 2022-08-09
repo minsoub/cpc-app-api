@@ -5,15 +5,13 @@ import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 
 public class ValidationUtils {
 
   public static void assertEmailFormat(String value) throws InvalidParameterException {
-    String regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-    Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(value);
-    if (!matcher.matches()) {
+    if (!EmailValidator.getInstance().isValid(value)) {
       throw new InvalidParameterException(ErrorCode.INVALID_EMAIL_FORMAT);
     }
   }
