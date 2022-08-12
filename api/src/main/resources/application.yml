@@ -75,10 +75,10 @@ spring:
     activate:
       on-profile: eks-dev
 logging:
-  config: classpath:logback-spring-${spring.profiles.active}.xml
+  config: classpath:logback-spring-dev.xml
 ---
 server:
-  port: 80
+  port: 8080
 spring:
   config:
     import: classpath:aws-properties-dev.yml, classpath:springdoc.yml
@@ -88,7 +88,7 @@ logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
 server:
-  port: 80
+  port: 8080
 spring:
   config:
     import: classpath:aws-properties-qa.yml, classpath:springdoc.yml
@@ -98,7 +98,7 @@ logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
 server:
-  port: 80
+  port: 8080
 spring:
   config:
     import: classpath:aws-properties-prod.yml
