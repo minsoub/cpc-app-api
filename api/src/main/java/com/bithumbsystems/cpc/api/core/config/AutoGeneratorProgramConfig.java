@@ -21,6 +21,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -53,20 +54,24 @@ public class AutoGeneratorProgramConfig {
 
   @EventListener(ContextRefreshedEvent.class)
   public void start() {
+    log.debug(">> EventListener ContextRefreshedEvent start >>");
     Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
+    log.debug(">> map => {}", map);
     map.entrySet()
         .stream()
-        .filter(e -> e.getValue().getMethodAnnotation(Operation.class) != null)
+        .filter(e -> e.getValue().getMethod().isAnnotationPresent(Operation.class))
         .filter(e -> {
           final var url = e.getKey().getPatternsCondition().getPatterns().iterator().next()
               .getPatternString();
+          log.debug(">> url => {} << ", url);
           return !url.contains("api-docs") && !url.contains("swagger-ui");
         }).map(e -> {
-          var operation = e.getValue().getMethodAnnotation(Operation.class);
+          var operation = e.getValue().getMethod().getAnnotation(Operation.class);
+          log.debug(">> operation : {}", operation);
           return Program.builder()
               .name(Objects.requireNonNull(operation).summary())
               .type(RoleType.valueOf(applicationProperties.getRoleType()))
-              .kindName(operation.tags() != null ? operation.tags()[0] : null)
+              .kindName(operation.tags() != null && operation.tags().length > 0 ? operation.tags()[0] : null)
               .actionMethod(ActionMethod.valueOf(
                   e.getKey().getMethodsCondition().getMethods().iterator().next().name()))
               .actionUrl(e.getKey().getPatternsCondition().getPatterns().iterator().next()
@@ -75,7 +80,7 @@ public class AutoGeneratorProgramConfig {
               .description(operation.description())
               .build();
         })
-        .map(
+        .forEach(
             program -> existsRegisterUrls(program.getActionMethod().name(),
                 program.getActionUrl())
                 .filter(exists -> !exists)
@@ -86,10 +91,10 @@ public class AutoGeneratorProgramConfig {
                   program.setId(PROGRAM_PREFIX + generateUUIDWithOutDash());
                   return program;
                 }).flatMap(p -> {
-                  log.debug("register program : {}" , p.toString());
+                  log.debug(">> register program : {}" , p.toString());
                   return reactiveMongoTemplate.save(program);
                 }).subscribe()
-        ).close();
+        );
   }
 
   public Mono<Boolean> existsRegisterUrls(String method, String path) {
@@ -114,14 +119,21 @@ public class AutoGeneratorProgramConfig {
     private String id;
     private String name;
     private RoleType type;
+    @Field("kind_name")
     private String kindName;
+    @Field("action_method")
     private ActionMethod actionMethod;
+    @Field("action_url")
     private String actionUrl;
+    @Field("is_use")
     private Boolean isUse;
     private String description;
     @Indexed
+    @Field("site_id")
     private String siteId;
+    @Field("create_date")
     private LocalDateTime createDate;
+    @Field("create_admin_account_id")
     private String createAdminAccountId;
   }
 }

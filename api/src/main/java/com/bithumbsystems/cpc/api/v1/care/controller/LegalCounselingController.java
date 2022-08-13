@@ -52,6 +52,11 @@ public class LegalCounselingController {
           ValidationUtils.assertEmailFormat(request.getEmail());
           ValidationUtils.assertCellPhoneFormat(request.getCellPhone());
 
+          if (filePart != null) {
+            String[] ALLOW_FILE_EXT = {"PNG", "GIF", "JPG", "JPEG", "PPTX", "XLSX", "DOC", "DOCS"};
+            ValidationUtils.assertAllowFileExt(filePart.filename(), ALLOW_FILE_EXT);
+          }
+
           return legalCounselingService.applyLegalCounseling(filePart, request);
         })
         .then(Mono.just(new SingleResponse()))

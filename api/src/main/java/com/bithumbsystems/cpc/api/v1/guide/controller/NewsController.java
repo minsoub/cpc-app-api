@@ -40,8 +40,8 @@ public class NewsController {
       @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
-    log.info("keyword: {}", keyword);
-    return ResponseEntity.ok().body(newsService.getNewsList(keyword, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
+    log.info("keyword: {}", keyword.replaceAll("[\r\n]",""));
+    return ResponseEntity.ok().body(newsService.getNewsList(keyword, PageRequest.of(pageNo, pageSize, Sort.by("posting_date").descending()))
         .map(SingleResponse::new));
   }
 

@@ -65,13 +65,12 @@ public class BoardController {
       @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize)
       throws UnsupportedEncodingException {
     String keyword = URLDecoder.decode(query, "UTF-8");
-    log.info("keyword: {}", keyword);
+    log.info("keyword: {}", keyword.replaceAll("[\r\n]",""));
 
     List<String> categories = new ArrayList<String>();
     if (StringUtils.isNotEmpty(category)) {
       categories = Arrays.asList(URLDecoder.decode(category, "UTF-8").split(";"));
     }
-    log.debug("categories: {}", categories);
 
     return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
         .map(SingleResponse::new));

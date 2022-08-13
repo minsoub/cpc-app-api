@@ -72,7 +72,7 @@ public class FraudReportValidationTest {
     });
 
     // then
-    assertEquals("invalid email format", exception.getMessage());
+    assertEquals("잘못된 이메일 형식입니다. 이메일 주소를 확인해 주세요.", exception.getMessage());
   }
 
   @DisplayName("제목 입력 길이 초과된 경우 에러 발생")
