@@ -1,9 +1,6 @@
 package com.bithumbsystems.cpc.api.v1.protection.controller;
 
-import static com.bithumbsystems.cpc.api.core.util.AES256Util.CLIENT_AES_KEY_CPC;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-
+import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationSequence;
 import com.bithumbsystems.cpc.api.core.util.AES256Util;
@@ -22,13 +19,16 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @Slf4j
 @RestController
 @RequestMapping("/fraud-report")
 @RequiredArgsConstructor
 public class FraudReportController {
   private final FraudReportService fraudReportService;
-
+  private final AwsProperties awsProperties;
   /**
    * 사기 신고 등록
    * @param fraudReportRequest 사기 신고 정보
@@ -43,7 +43,7 @@ public class FraudReportController {
     return ResponseEntity.ok().body(Mono.just(fraudReportRequest)
             .flatMap(request -> {
               // 1. 개인정보 복호화
-              request.setEmail(AES256Util.decryptAES(CLIENT_AES_KEY_CPC, request.getEmail()));
+              request.setEmail(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getEmail()));
               log.debug("email : {}", request.getEmail());
               // 2. 유효성 검증
               ValidationUtils.assertEmailFormat(request.getEmail());

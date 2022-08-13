@@ -24,6 +24,17 @@ public class AwsProperties {
 
   @Value("${cloud.aws.param-store.kms-name}")
   private String paramStoreKmsName;
+  @Value("${cloud.aws.param-store.salt-name}")
+  private String paramStoreSaltName;
+  @Value("${cloud.aws.param-store.iv-name}")
+  private String paramStoreIvName;
+
+  @Value("${cloud.aws.param-store.cpc-name}")
+  private String paramStoreCpcName;
 
   private String kmsKey;
+  private String saltKey;
+  private String ivKey;
+
+  private String cpcCryptoKey;
 }
