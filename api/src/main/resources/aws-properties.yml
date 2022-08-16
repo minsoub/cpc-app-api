@@ -15,4 +15,6 @@ cloud:
       prefix: /smartadmin
       doc-name: docdb
       kms-name: kms
+      salt-name: salt
+      iv-name: iv
       cpc-name: cpc

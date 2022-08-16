@@ -57,9 +57,9 @@ public class LegalCounselingService {
     legalCounseling.setStatus(legalCounseling.getAnswerToContacts() ? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
 
     // DB 암호화
-    legalCounseling.setName(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getName()));
-    legalCounseling.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getEmail()));
-    legalCounseling.setCellPhone(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getCellPhone()));
+    legalCounseling.setName(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getName(), awsProperties.getSaltKey(), awsProperties.getIvKey()));
+    legalCounseling.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getEmail(), awsProperties.getSaltKey(), awsProperties.getIvKey()));
+    legalCounseling.setCellPhone(AES256Util.encryptAES(awsProperties.getKmsKey(), legalCounselingRequest.getCellPhone(), awsProperties.getSaltKey(), awsProperties.getIvKey()));
 
     if (filePart == null) {
       return legalCounselingDomainService.createLegalCounseling(legalCounseling)

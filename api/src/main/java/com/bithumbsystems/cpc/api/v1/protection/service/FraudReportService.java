@@ -55,7 +55,7 @@ public class FraudReportService {
   public Mono<Void> createFraudReport(FilePart filePart, FraudReportRequest fraudReportRequest) {
     FraudReport fraudReport = FraudReportMapper.INSTANCE.toEntity(fraudReportRequest);
     fraudReport.setStatus(fraudReport.getAnswerToContacts()? Status.REQUEST.getCode() : Status.REGISTER.getCode()); // 연락처로 답변받기 체크 시 '답변요청' 아니면 '접수' 상태
-    fraudReport.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), fraudReportRequest.getEmail())); // DB 암호화
+    fraudReport.setEmail(AES256Util.encryptAES(awsProperties.getKmsKey(), fraudReportRequest.getEmail(), awsProperties.getSaltKey(), awsProperties.getIvKey())); // DB 암호화
 
     if (filePart == null) {
       return fraudReportDomainService.createFraudReport(fraudReport)
