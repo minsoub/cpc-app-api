@@ -75,7 +75,7 @@ spring:
     activate:
       on-profile: eks-dev
 logging:
-  config: classpath:logback-spring-dev.xml
+  config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
 server:
   port: 8080
