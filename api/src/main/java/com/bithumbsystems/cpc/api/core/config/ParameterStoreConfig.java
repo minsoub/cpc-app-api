@@ -10,6 +10,7 @@ import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreCons
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.config.property.MongoProperties;
+import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -43,6 +44,7 @@ public class ParameterStoreConfig {
 
         this.ssmClient = SsmClient.builder()
             .region(Region.of(awsProperties.getRegion()))
+            .endpointOverride(URI.create(awsProperties.getSsmEndPoint()))
             .build();
 
         this.mongoProperties = new MongoProperties(
