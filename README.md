@@ -1,5 +1,5 @@
 ## **프로젝트 소개**
-- 고객 보호 센터(CPC, Customer Protection Center) 사이트 백엔드
+- 고객 지원 센터(CPC, Customer Protection Center) 사이트 백엔드
 
 ## **기술 스택 소개**
 
