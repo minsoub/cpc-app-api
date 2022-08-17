@@ -1,6 +1,7 @@
 package com.bithumbsystems.cpc.api.core.config;
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
+import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class AwsConfig {
     public void init() {
         kmsAsyncClient = KmsAsyncClient.builder()
             .region(Region.of(awsProperties.getRegion()))
+            .endpointOverride(URI.create(awsProperties.getKmsEndPoint()))
             .build();
     }
 
