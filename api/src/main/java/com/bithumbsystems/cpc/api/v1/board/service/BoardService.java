@@ -1,5 +1,7 @@
 package com.bithumbsystems.cpc.api.v1.board.service;
 
+import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
+import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMapper;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMasterMapper;
 import com.bithumbsystems.cpc.api.v1.board.model.response.BoardMasterResponse;
@@ -29,7 +31,8 @@ public class BoardService {
    * @return
    */
   public Mono<BoardMasterResponse> getBoardMasterInfo(String boardMasterId, String siteId) {
-    return boardDomainService.getBoardMasterInfo(boardMasterId, siteId).map(BoardMasterMapper.INSTANCE::toDto);
+    return boardDomainService.getBoardMasterInfo(boardMasterId, siteId).map(BoardMasterMapper.INSTANCE::toDto)
+        .switchIfEmpty(Mono.error(new InvalidParameterException(ErrorCode.NOT_FOUND_CONTENT)));
   }
 
   /**
@@ -66,6 +69,7 @@ public class BoardService {
    */
   public Mono<BoardResponse> getBoardData(Long boardId) {
     return boardDomainService.incrementReadCount(boardId)
-        .flatMap(board -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto));
+        .flatMap(board -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
+        .switchIfEmpty(Mono.error(new InvalidParameterException(ErrorCode.NOT_FOUND_CONTENT)));
   }
 }
