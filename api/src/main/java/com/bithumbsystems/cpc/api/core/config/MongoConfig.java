@@ -2,7 +2,6 @@ package com.bithumbsystems.cpc.api.core.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
 import com.mongodb.connection.netty.NettyStreamFactoryFactory;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
@@ -26,7 +25,7 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 
 @Slf4j
 @Configuration
-@Profile("dev|prod|eks-dev")
+@Profile("dev|qa|prod|eks-dev")
 @RequiredArgsConstructor
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
