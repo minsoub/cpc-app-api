@@ -1,6 +1,7 @@
 package com.bithumbsystems.persistence.mongodb.board.repository;
 
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
+import java.time.LocalDateTime;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -33,4 +34,6 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
       + "}",
       sort = "{ create_date : -1 }")
   Flux<Board> findALLByIsSetNotice(String boardMasterId);
+
+  Flux<Board> findBoardByBoardMasterIdOrderByCreateDateDesc(String BoardMasterId);
 }

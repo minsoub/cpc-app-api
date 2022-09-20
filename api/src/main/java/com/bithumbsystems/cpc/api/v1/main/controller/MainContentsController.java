@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -38,5 +39,18 @@ public class MainContentsController {
             .blockchainNews(tuple.getT4())
             .build()))
         .map(SingleResponse::new));
+  }
+
+  /**
+   * 메인화면 상단 최근글 조회
+   * @return
+   */
+  @GetMapping("/board/list")
+  @Operation(summary = "메인화면 게시글 조회", description = "메인화면 > 상단 : 게시글 조회", tags = "메인화면 > 상단 게시글 조회")
+  public ResponseEntity<Mono<?>> getMainBoardList(
+      @RequestParam(name = "board_master_id") String boardMasterId,
+      @RequestParam(name = "size", required = false, defaultValue = "2") Integer size) {
+    return ResponseEntity.ok().body(
+        mainContentsService.getBoardList(boardMasterId, size).map(SingleResponse::new));
   }
 }

@@ -71,4 +71,15 @@ public class MainContentsService {
         .concatMap(boardId -> newsDomainService.getNewsData(boardId).map(NewsMapper.INSTANCE::toDto))
         .collectList();
   }
+
+  /**
+   * 상단 게시글 조회
+   * @return
+   */
+  public Mono<List<BoardResponse>> getBoardList(String boardMasterId, int size) {
+    return boardDomainService.getBoardSize(boardMasterId)
+        .take(size)
+        .map(BoardMapper.INSTANCE::toDto)
+        .collectList();
+  }
 }

@@ -85,4 +85,13 @@ public class BoardDomainService {
           return boardRepository.save(board);
         });
   }
+
+  /**
+   * 게시글 갯수 단위 조회
+   * @param boardMasterId 게시판 ID
+   * @return
+   */
+  public Flux<Board> getBoardSize(String boardMasterId) {
+    return boardRepository.findBoardByBoardMasterIdOrderByCreateDateDesc(boardMasterId);
+  }
 }
