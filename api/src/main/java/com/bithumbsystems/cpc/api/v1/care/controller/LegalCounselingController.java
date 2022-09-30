@@ -1,8 +1,5 @@
 package com.bithumbsystems.cpc.api.v1.care.controller;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.core.model.validation.ValidationSequence;
@@ -16,15 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("/legal-counseling")
+//@RequestMapping("/legal-counseling")
 @RequiredArgsConstructor
 public class LegalCounselingController {
   private final AwsProperties awsProperties;
@@ -36,7 +31,7 @@ public class LegalCounselingController {
    * @param filePart 첨부 파일
    * @return
    */
-  @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+//  @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
   @Operation(summary = "법률 상담 신청", description = "케어 프로그램 > 법률상담: 법률 상담 신청", tags = "케어 프로그램 > 법률상담")
   public ResponseEntity<Mono<?>> applyLegalCounseling(@Validated(ValidationSequence.class) @RequestPart(value = "legalCounselingRequest") LegalCounselingRequest legalCounselingRequest,
       @RequestPart(value = "file", required = false) FilePart filePart) {
