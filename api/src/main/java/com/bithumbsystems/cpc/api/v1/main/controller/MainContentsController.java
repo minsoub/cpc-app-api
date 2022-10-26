@@ -58,11 +58,11 @@ public class MainContentsController {
   /**
    * 메인화면 상단 빗썸 지수 조회
    */
-//  @GetMapping("/btci")
-//  public ResponseEntity<?> getBtci() {
-//    return ResponseEntity.ok().body(
-//        mainContentsService.getBtci().map(SingleResponse::new));
-//  }
+  @GetMapping("/btci")
+  public ResponseEntity<?> getBtci() {
+    return ResponseEntity.ok().body(
+        mainContentsService.getBtci().map(SingleResponse::new));
+  }
 
 
 }
