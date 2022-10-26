@@ -17,7 +17,7 @@ public class ValidationUtils {
   }
 
   public static void assertNameFormat(String value) throws InvalidParameterException {
-    String regexp = "^[a-zA-Z0-9가-힣. ]*$";
+    String regexp = "^[가-힣]*$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(value);
     if (!matcher.matches()) {

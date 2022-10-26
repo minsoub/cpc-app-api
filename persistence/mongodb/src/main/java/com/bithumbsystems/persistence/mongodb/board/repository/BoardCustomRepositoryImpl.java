@@ -4,6 +4,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -33,39 +34,28 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
 
   private Query getQueryBySearchText(String boardMasterId, String keyword, List<String> categories) {
     var query = new Query();
+    Criteria criteria = new Criteria();
+
+    criteria.andOperator(
+        where("board_master_id").is(boardMasterId),
+        where("is_use").is(true),
+        where("is_set_notice").is(false),
+        new Criteria()
+            .orOperator(
+                where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i"),
+                where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+            )
+    );
+
+    query.addCriteria(criteria);
 
     if (categories.size() > 0) {
-      query.addCriteria(
-          new Criteria()
-              .andOperator(
-                  where("board_master_id").is(boardMasterId),
-                  where("is_use").is(true),
-                  where("is_set_notice").is(false),
-                  where("category").in(categories),
-                  new Criteria()
-                      .orOperator(
-                          where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
-                          where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i"),
-                          where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
-                      )
-              )
-      );
-    } else {
-      query.addCriteria(
-          new Criteria()
-              .andOperator(
-                  where("board_master_id").is(boardMasterId),
-                  where("is_use").is(true),
-                  where("is_set_notice").is(false),
-                  new Criteria()
-                      .orOperator(
-                          where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
-                          where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i"),
-                          where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
-                      )
-              )
-      );
+      query.addCriteria(Criteria.where("category").in(categories));
     }
+
+
+
     return query;
   }
 }

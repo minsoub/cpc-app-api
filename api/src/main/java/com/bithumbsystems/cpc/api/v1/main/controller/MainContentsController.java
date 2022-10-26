@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.main.controller;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.main.model.response.MainContentsResponse;
 import com.bithumbsystems.cpc.api.v1.main.service.MainContentsService;
+import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,4 +54,15 @@ public class MainContentsController {
     return ResponseEntity.ok().body(
         mainContentsService.getBoardList(boardMasterId, size).map(SingleResponse::new));
   }
+
+  /**
+   * 메인화면 상단 빗썸 지수 조회
+   */
+  @GetMapping("/btci")
+  public ResponseEntity<?> getBtci() {
+    return ResponseEntity.ok().body(
+        mainContentsService.getBtci().map(SingleResponse::new));
+  }
+
+
 }
