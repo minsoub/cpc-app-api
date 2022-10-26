@@ -31,13 +31,13 @@ public class DisclosureScheduler {
   private final AssetService assetService;
 
 //  @Scheduled (cron = "* * * * * *")
-  @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
-  public void getDisclosureXangleApi() {
-
-    saveDisclosure(0);
-    saveAsset(0);
-
-  }
+//  @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
+//  public void getDisclosureXangleApi() {
+//
+//    saveDisclosure(0);
+//    saveAsset(0);
+//
+//  }
 
   public void saveDisclosure(int page) {
 
