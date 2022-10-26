@@ -1,7 +1,6 @@
 package com.bithumbsystems.cpc.api.core.config.local;
 
 
-import com.bithumbsystems.cpc.api.core.config.ParameterStoreConfig;
 import com.mongodb.reactivestreams.client.MongoClient;
 import lombok.RequiredArgsConstructor;
 import net.javacrumbs.shedlock.core.LockProvider;
@@ -17,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @RequiredArgsConstructor
 @Profile("local")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
-public class LocalSchedulerConfiguration {
+public class LocalSchedulerConfig {
 
   private final LocalMongoConfig config;
 

@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,20 +26,23 @@ import reactor.core.scheduler.Schedulers;
 
 @EnableScheduling
 @Configuration
+@Slf4j
 @RequiredArgsConstructor
 public class DisclosureScheduler {
   private final DisclosureService disclosureService;
-
   private final AssetService assetService;
 
-//  @Scheduled (cron = "* * * * * *")
-//  @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
-//  public void getDisclosureXangleApi() {
-//
+
+  @Scheduled (cron = "* * * * * *")
+  @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
+  public void getDisclosureXangleApi() {
+
+    log.info("xangleApi Scheduler Current Thread : {}", Thread.currentThread().getName());
+
 //    saveDisclosure(0);
 //    saveAsset(0);
-//
-//  }
+
+  }
 
   public void saveDisclosure(int page) {
 

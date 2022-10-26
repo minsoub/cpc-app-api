@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @RequiredArgsConstructor
 @Profile("dev|qa|prod|eks-dev")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
-public class SchedulerConfiguration {
+public class SchedulerConfig {
 
   private final ParameterStoreConfig config;
 
