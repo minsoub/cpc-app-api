@@ -20,8 +20,10 @@ public class SchedulerConfig {
 
   private final ParameterStoreConfig config;
 
+  private final MongoClient mongoClient;
+
   @Bean
-  public LockProvider lockProvider(MongoClient mongoClient) {
+  public LockProvider lockProvider() {
     return new ReactiveStreamsMongoLockProvider(mongoClient.getDatabase(config.getMongoProperties().getMongodbName()));
   }
 
