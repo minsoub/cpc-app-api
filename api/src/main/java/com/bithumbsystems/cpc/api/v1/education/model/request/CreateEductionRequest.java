@@ -1,11 +1,13 @@
 package com.bithumbsystems.cpc.api.v1.education.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +20,9 @@ public class CreateEductionRequest {
 //  @Pattern(regexp = "^[가-힣]")
   private String name;
 //  @Future
-  private LocalDateTime desireDate;
+//  @DateTimeFormat(pattern = "yyyy-MM-dd")
+//  @JsonFormat(pattern = "yyyy-MM-dd")
+  private String desireDate;
 //  @Email
   private String email;
 //  @Pattern(regexp = "^\\d+")

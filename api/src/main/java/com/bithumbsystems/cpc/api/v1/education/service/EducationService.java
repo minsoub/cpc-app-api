@@ -4,6 +4,7 @@ import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
 import com.bithumbsystems.cpc.api.core.util.AES256Util;
+import com.bithumbsystems.cpc.api.core.util.DateUtils;
 import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.education.model.request.CreateEductionRequest;
 import com.bithumbsystems.persistence.mongodb.education.model.entity.Education;
@@ -23,9 +24,20 @@ public class EducationService {
   private final EducationDomainService educationDomainService;
 
   public Mono<Education> createEducation(CreateEductionRequest request) {
+
+    log.info("@@@@@@@@@@");
+    log.info(awsProperties.getCpcCryptoKey());
+    log.info(request.getName());
+    log.info(request.getEmail());
+    log.info(request.getCellPhone());
+
     request.setName(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getName()));
     request.setEmail(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getEmail()));
     request.setCellPhone(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getCellPhone()));
+    log.info(request.getName());
+    log.info(request.getEmail());
+    log.info(request.getCellPhone());
+    log.info(request.getDesireDate().toString());
 
     validCreateEducationRequest(request);
 
@@ -48,7 +60,7 @@ public class EducationService {
         .email(AES256Util.encryptAES(awsProperties.getKmsKey(), request.getEmail(), awsProperties.getSaltKey(), awsProperties.getIvKey()))
         .cellPhone(AES256Util.encryptAES(awsProperties.getKmsKey(), request.getCellPhone(), awsProperties.getSaltKey(), awsProperties.getIvKey()))
         .content(request.getContent())
-        .desireDate(request.getDesireDate())
+        .desireDate(DateUtils.toLocalDateTime(request.getDesireDate()))
         .build();
   }
 
