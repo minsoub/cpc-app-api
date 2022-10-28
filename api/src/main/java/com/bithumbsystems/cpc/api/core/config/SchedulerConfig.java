@@ -10,6 +10,7 @@ import net.javacrumbs.shedlock.provider.mongo.reactivestreams.ReactiveStreamsMon
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @RequiredArgsConstructor
 @Profile("!local")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
+@ComponentScan(basePackages = {"com.bithumbsystems"})
 public class SchedulerConfig {
 
   private final ParameterStoreConfig config;
