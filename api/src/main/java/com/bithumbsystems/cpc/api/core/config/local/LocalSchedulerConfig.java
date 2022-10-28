@@ -17,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Profile("local")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
 public class LocalSchedulerConfig {
-
   private final LocalMongoConfig config;
 
   @Bean
