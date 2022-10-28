@@ -20,6 +20,7 @@ public class LocalSchedulerConfig {
   private final LocalMongoConfig config;
 
   @Bean
+  @Profile("local")
   public LockProvider lockProvider(MongoClient mongoClient) {
     return new ReactiveStreamsMongoLockProvider(mongoClient.getDatabase(config.getDatabaseName()));
   }
