@@ -70,7 +70,7 @@ public class BoardDomainService {
    * @return
    */
   public Mono<Board> getBoardData(Long boardId) {
-    return boardRepository.findById(boardId);
+    return boardRepository.findBoardByIdAndIsUse(boardId, true);
   }
 
   /**
@@ -92,6 +92,6 @@ public class BoardDomainService {
    * @return
    */
   public Flux<Board> getBoardSize(String boardMasterId) {
-    return boardRepository.findBoardByBoardMasterIdOrderByCreateDateDesc(boardMasterId);
+    return boardRepository.findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(boardMasterId, true);
   }
 }
