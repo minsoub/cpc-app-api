@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
@@ -35,5 +36,7 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
       sort = "{ create_date : -1 }")
   Flux<Board> findALLByIsSetNotice(String boardMasterId);
 
-  Flux<Board> findBoardByBoardMasterIdOrderByCreateDateDesc(String BoardMasterId);
+  Flux<Board> findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(String BoardMasterId, Boolean isUse);
+
+  Mono<Board> findBoardByIdAndIsUse(Long id, Boolean isUse);
 }
