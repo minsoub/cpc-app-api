@@ -7,19 +7,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AssetProfileResponse {
 
-  private Data data;
+  private List<Data> data;
 
   @Setter
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
+  @ToString
   @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
   public static class Data {
 
@@ -30,6 +33,7 @@ public class AssetProfileResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     public static class Assets {
       private String assetName;

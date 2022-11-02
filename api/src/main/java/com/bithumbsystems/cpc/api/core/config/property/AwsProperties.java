@@ -34,9 +34,10 @@ public class AwsProperties {
   private String paramStoreSaltName;
   @Value("${cloud.aws.param-store.iv-name}")
   private String paramStoreIvName;
-
   @Value("${cloud.aws.param-store.cpc-name}")
   private String paramStoreCpcName;
+  @Value("${cloud.aws.param-store.xangle-name}")
+  private String paramStoreXangleName;
 
   private String kmsKey;
   private String saltKey;
