@@ -23,3 +23,4 @@ cloud:
       salt-name: salt
       iv-name: iv
       cpc-name: cpc
+      xangle-name: xangle

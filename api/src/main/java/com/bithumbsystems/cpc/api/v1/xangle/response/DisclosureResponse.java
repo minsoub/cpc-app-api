@@ -1,5 +1,6 @@
 package com.bithumbsystems.cpc.api.v1.xangle.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
@@ -31,10 +32,11 @@ public class DisclosureResponse {
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     public static class Disclosures {
 
-      private String projectId;
+      @JsonProperty("disclosure_id")
+      private String id;
       private String projectSymbol;
       private String projectLogo;
-      private String disclosureId;
+      private String projectId;
       private String title;
       private String publishStatus;
       private String publishTimestamp;

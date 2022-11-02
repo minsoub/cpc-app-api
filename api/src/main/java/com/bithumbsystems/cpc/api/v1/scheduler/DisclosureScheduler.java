@@ -33,85 +33,15 @@ public class DisclosureScheduler {
   private final AssetService assetService;
 
 
-//  @Scheduled (cron = "* * * * * *")
+  @Scheduled (cron = "0/20 * * * * *")
   @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
   public void getDisclosureXangleApi() {
 
     log.info("xangleApi Scheduler Current Thread : {}", Thread.currentThread().getName());
 
-//    saveDisclosure(0);
-//    saveAsset(0);
-
-  }
-
-  public void saveDisclosure(int page) {
-
-    Mono<DisclosureResponse> disclosureMono = disclosureService.getDisclosureResponseFromXangle(page);
-
-    disclosureMono.map(DisclosureMapper.INSTANCE::toEntity)
-        .doOnNext(result -> {
-          if (getIndex(result) != null) {
-            return;
-          }
-          int pageNo = page;
-          if (result.size() >= 50) {
-            saveDisclosure(pageNo++);
-          }
-        })
-        .publishOn(Schedulers.boundedElastic())
-        .map(disclosureList -> {
-          Integer index = getIndex(disclosureList);
-          if (getIndex(disclosureList) != null) {
-            disclosureList = disclosureList.stream().limit(index).collect(Collectors.toList());
-          }
-
-          return disclosureService.saveAllDisclosure(disclosureList).subscribe();
-        })
-        .subscribe();
-  }
-
-  public Integer getIndex(List<Disclosure> disclosureList) {
-    Mono<Disclosure> disclosure = disclosureService.findFirstByOrderByPublishTimestampDesc();
-
-    AtomicReference<OptionalInt> index = new AtomicReference<>();
-
-    disclosure.subscribe(
-        result -> {
-          index.set(
-              IntStream.range(0, disclosureList.size())
-              .filter(i -> {
-                return result.getDisclosureId().equals(disclosureList.get(i).getDisclosureId());
-              }).findFirst()
-          );
-        }
-    );
-
-    System.out.println("@@@@@@@@@");
-    System.out.println(index.get());
-
-
-//    if (index.get()) {
-//      return index.get().getAsInt();
-//    } else {
-//      return null;
-//    }
-    return null;
-  }
-
-
-  public void saveAsset(int page) {
-    Mono<AssetResponse> assetMono = assetService.getAssetResponseFromXangle(page);
-
-    assetMono.map(AssetMapper.INSTANCE::toEntity)
-        .doOnNext(result -> {
-          int pageNo = page;
-          if (result.size() >= 50) {
-            saveAsset(++pageNo);
-          }
-        })
-        .publishOn(Schedulers.boundedElastic())
-        .map(assets -> assetService.saveAll(assets).subscribe())
-        .subscribe();
+    disclosureService.saveDisclosure(0);
+    assetService.saveAsset(0);
+    assetService.insertProjectName();
 
   }
 

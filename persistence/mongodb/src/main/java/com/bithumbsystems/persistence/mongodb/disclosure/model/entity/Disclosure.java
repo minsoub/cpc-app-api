@@ -1,13 +1,16 @@
 package com.bithumbsystems.persistence.mongodb.disclosure.model.entity;
 
+import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
 import com.bithumbsystems.persistence.mongodb.base.entity.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
@@ -19,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Disclosure extends Date {
 
   @Id
-  private String disclosureId;
+  private String id;
   private String projectSymbol;
   private String projectLogo;
   private String projectId;
@@ -36,4 +39,5 @@ public class Disclosure extends Date {
   private Boolean valid;
   private Boolean resolved;
 
+  private List<Asset> cpcAsset;
 }

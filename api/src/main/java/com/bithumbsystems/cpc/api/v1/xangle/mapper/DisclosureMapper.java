@@ -28,11 +28,6 @@ public interface DisclosureMapper {
 
   @Named("stringToLocalDateTime")
   default LocalDateTime stringToLocalDateTime(String date) {
-
-    System.out.println("@@@@@@@@@@@@@@");
-    System.out.println(date);
-    System.out.println("@@@@@@@@@@@@@@");
-
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss.SSSSSSXXX");
     return LocalDateTime.parse(date, formatter);
   }

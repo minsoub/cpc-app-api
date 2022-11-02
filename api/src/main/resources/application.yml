@@ -48,6 +48,14 @@ logging:
       spring:
         cloud: INFO
 
+xangle:
+  host: https://pro-api.xangle.io
+  disclosure-path: /v1/disclosure/list/all
+  asset-list-path: /v1/asset/list
+  asset-profile-path: /v1/asset/profile
+
+
+
 ---
 server:
   port: 8085
