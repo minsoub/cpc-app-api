@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
-@Profile("!local")
+@Profile("dev|qa|prod|eks-dev")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
 public class SchedulerConfig {
 
@@ -27,7 +27,6 @@ public class SchedulerConfig {
   }
 
   @Bean
-  @Profile("!local")
   public LockProvider lockProvider(MongoClient mongoClient) {
     return new ReactiveStreamsMongoLockProvider(mongoClient.getDatabase(config.getMongoProperties().getMongodbName()));
   }

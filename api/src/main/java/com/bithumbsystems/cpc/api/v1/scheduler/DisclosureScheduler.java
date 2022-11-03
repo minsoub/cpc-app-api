@@ -21,11 +21,11 @@ import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-@EnableScheduling
-@Configuration
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class DisclosureScheduler {
@@ -40,8 +40,8 @@ public class DisclosureScheduler {
     log.info("xangleApi Scheduler Current Thread : {}", Thread.currentThread().getName());
 
     disclosureService.saveDisclosure(0);
-    assetService.saveAsset(0);
-    assetService.insertProjectName();
+//    assetService.saveAsset(0);
+//    assetService.insertProjectName();
 
   }
 
