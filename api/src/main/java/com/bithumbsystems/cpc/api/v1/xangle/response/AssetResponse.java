@@ -30,9 +30,9 @@ public class AssetResponse {
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     public static class Assets {
-      private String name;
       private String assetId;
       private String symbol;
+      private String name;
     }
 
   }

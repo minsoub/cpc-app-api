@@ -94,4 +94,11 @@ public class BoardDomainService {
   public Flux<Board> getBoardSize(String boardMasterId) {
     return boardRepository.findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(boardMasterId, true);
   }
+  /**
+   * 게시글 갯수 단위 조회
+   * @return
+   */
+  public Flux<Board> getAllBoardList() {
+    return boardRepository.findBoardByIsUseOrderByCreateDateDesc(true);
+  }
 }

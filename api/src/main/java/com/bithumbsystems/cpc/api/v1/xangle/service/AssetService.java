@@ -9,21 +9,13 @@ import com.bithumbsystems.cpc.api.v1.xangle.response.AssetProfileResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetResponse;
 import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
 import com.bithumbsystems.persistence.mongodb.asset.service.AssetDomainService;
-import java.net.URISyntaxException;
-import java.time.Duration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import reactor.util.retry.Retry;
 
 @Service
 @RequiredArgsConstructor
@@ -56,12 +48,22 @@ public class AssetService {
           }
         })
         .publishOn(Schedulers.boundedElastic())
-        .map(assets -> saveAll(assets).subscribe())
+        .map(assets -> {
+          for (Asset asset : assets) {
+            assetDomainService.findById(asset.getSymbol()).switchIfEmpty(
+                Mono.defer(() -> {
+                  return assetDomainService.save(asset);
+                })
+            ).subscribe();
+          }
+          return assets;
+        })
         .subscribe();
 
   }
 
   public Mono<AssetResponse> getAssetResponseFromXangle(Integer page) {
+    log.info("get Asset list xangle api call");
     return webClientUtil.requestGet(xangleProperties.getHost())
         .get()
         .uri(uriBuilder ->
@@ -72,43 +74,80 @@ public class AssetService {
         )
         .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
-        .bodyToMono(AssetResponse.class)
-        .retryWhen(
-            Retry.backoff(3, Duration.ofSeconds(60))
-                .filter(throwable -> throwable instanceof TooManyRequests)
-        );
+        .bodyToMono(AssetResponse.class);
   }
 
-  public void insertProjectName() {
+//  public void insertProjectName() {
+//    findAllByProjectNameIsNull().publishOn(Schedulers.boundedElastic()).map(
+//        it -> {
+//            getAssetProfileResponseFromXangle(it.getAssetId()).publishOn(Schedulers.boundedElastic()).map(
+//                assetProfileResponse -> {
+//                  Asset asset = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
+//
+//                  asset = Asset.builder()
+//                      .assetId(it.getAssetId())
+//                      .symbol(it.getSymbol())
+//                      .projectName(asset.getProjectName())
+//                      .assetName(asset.getAssetName())
+//                      .name(it.getName())
+//                      .build();
+//
+//                  return assetDomainService.save(asset).subscribe();
+//                }
+//            ).subscribe();
+//          return it;
+//        }
+//    ).subscribe();
+//  }
 
-    findAllByProjectNameIsNull().publishOn(Schedulers.boundedElastic()).map(
+  public Mono<Asset> insertProjectNameBySymbol(Asset asset) {
+
+    return assetDomainService.findById(asset.getSymbol()).flatMap(
         it -> {
-            getAssetProfileResponseFromXangle(it.getAssetId()).publishOn(Schedulers.boundedElastic()).map(
-                assetProfileResponse -> {
-                  log.info("asset profile : {}", assetProfileResponse);
-                  Asset asset = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
-                  log.info("asset mapper list : {}", asset);
+          return getAssetProfileResponseFromXangle(asset.getAssetId()).flatMap(
+              assetProfileResponse -> {
+                Asset assetResponse = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
 
-                  asset = Asset.builder()
-                      .assetId(it.getAssetId())
-                      .symbol(it.getSymbol())
-                      .projectName(asset.getProjectName())
-                      .assetName(asset.getAssetName())
-                      .name(it.getName())
-                      .build();
+                assetResponse = Asset.builder()
+                    .assetId(it.getAssetId())
+                    .symbol(it.getSymbol())
+                    .projectName(assetResponse.getProjectName())
+                    .assetName(assetResponse.getAssetName())
+                    .name(it.getName())
+                    .build();
 
-                  log.info("save asset : {}", asset);
-
-                  return assetDomainService.save(asset).subscribe();
-                }
-            ).subscribe();
-          return it;
+                return assetDomainService.save(assetResponse);
+              }
+          );
         }
-    ).subscribe();
+    );
+
+//    return assetDomainService.findById(asset.getSymbol()).publishOn(Schedulers.boundedElastic()).map(
+//        it -> {
+//          getAssetProfileResponseFromXangle(it.getAssetId()).publishOn(Schedulers.boundedElastic()).map(
+//              assetProfileResponse -> {
+//                Asset assetResponse = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
+//
+//                assetResponse = Asset.builder()
+//                    .assetId(it.getAssetId())
+//                    .symbol(it.getSymbol())
+//                    .projectName(assetResponse.getProjectName())
+//                    .assetName(assetResponse.getAssetName())
+//                    .name(it.getName())
+//                    .build();
+//
+//                return assetDomainService.save(assetResponse).subscribe();
+//              }
+//          ).subscribe();
+//          return it;
+//        }
+//    ).map();
+
 
   }
 
   public Mono<AssetProfileResponse> getAssetProfileResponseFromXangle(String assetId) {
+    log.info("get Asset profile xangle api call");
     return webClientUtil.requestGet(xangleProperties.getHost())
         .get()
         .uri(uriBuilder ->
@@ -120,9 +159,22 @@ public class AssetService {
         .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
         .bodyToMono(AssetProfileResponse.class)
-        .retryWhen(
-            Retry.backoff(3, Duration.ofSeconds(60))
-                .filter(throwable -> throwable instanceof TooManyRequests)
+        .onErrorMap(
+            e -> {
+              log.error(e.toString());
+              return e;
+            }
         );
   }
+
+  public Mono<Asset> checkAsset(String projectSymbol) {
+    return assetDomainService.findById(projectSymbol).switchIfEmpty(
+        Mono.defer(() -> {
+          log.info("check asset start symbol : {}", projectSymbol);
+          saveAsset(0);
+          return assetDomainService.findById(projectSymbol);
+        })
+    );
+  }
+
 }

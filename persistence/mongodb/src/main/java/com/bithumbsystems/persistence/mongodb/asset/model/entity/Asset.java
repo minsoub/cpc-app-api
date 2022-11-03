@@ -23,5 +23,7 @@ public class Asset extends Date {
   private String name;
   private String projectName;
   private String assetName;
+  @Builder.Default
+  private Boolean isSymbolMatching = true;
 
 }

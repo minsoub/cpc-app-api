@@ -9,6 +9,7 @@ import com.bithumbsystems.cpc.api.v1.xangle.mapper.DisclosureResponseMapper;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureClientResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureResponse;
+import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
 import com.bithumbsystems.persistence.mongodb.asset.service.AssetDomainService;
 import com.bithumbsystems.persistence.mongodb.disclosure.model.entity.Disclosure;
 import com.bithumbsystems.persistence.mongodb.disclosure.service.DisclosureDomainService;
@@ -41,17 +42,9 @@ import reactor.util.retry.Retry;
 public class DisclosureService {
 
   private final DisclosureDomainService disclosureDomainService;
-  private final AssetDomainService assetDomainService;
   private final WebClientUtil webClientUtil;
   private final XangleProperties xangleProperties;
-
-  public Flux<Disclosure> saveAllDisclosure(List<Disclosure> disclosureList) {
-    return disclosureDomainService.saveAll(disclosureList);
-  }
-
-  public Mono<Disclosure> findFirstByOrderByPublishTimestampDesc() {
-    return disclosureDomainService.findFirstByOrderByPublishTimestampDesc();
-  }
+  private final AssetService assetService;
 
   public Mono<List<DisclosureClientResponse>> getDisclosureList(String search, int pageNo, int pageSize) {
 
@@ -59,16 +52,23 @@ public class DisclosureService {
 
     return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).flatMap(
         disclosure -> {
-          return assetDomainService.findById(disclosure.getProjectSymbol()).map(
+          return assetService.checkAsset(disclosure.getProjectSymbol()).map(
               asset -> {
-                return DisclosureClientResponse.builder()
+                DisclosureClientResponse.DisclosureClientResponseBuilder disclosureClientResponseBuilder = DisclosureClientResponse.builder()
                     .symbol(disclosure.getProjectSymbol())
                     .projectLogo(disclosure.getProjectLogo())
-                    .projectName(asset.getProjectName())
                     .title(disclosure.getTitle())
                     .createDate(disclosure.getPublishTimestamp())
-                    .xangleUrl(disclosure.getXangleUrl())
-                    .build();
+                    .xangleUrl(disclosure.getXangleUrl());
+
+                if (asset.getProjectName() == null) {
+                  log.info("asset project name is null asset : {}", asset);
+                  return disclosureClientResponseBuilder.projectName(
+                  assetService.insertProjectNameBySymbol(asset).block().getProjectName()).build();
+                } else {
+                  log.info("asset project name asset : {}", asset);
+                  return disclosureClientResponseBuilder.projectName(asset.getProjectName()).build();
+                }
               }
           );
         }
@@ -95,8 +95,9 @@ public class DisclosureService {
   }
 
   public void saveDisclosure(int page) {
-
     log.info("save disclosure page : {}", page);
+
+    if (page >= 10) return;
 
     Mono<DisclosureResponse> disclosureMono = getDisclosureResponseFromXangle(page);
 

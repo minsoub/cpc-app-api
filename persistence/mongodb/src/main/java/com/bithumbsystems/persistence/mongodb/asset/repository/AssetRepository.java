@@ -8,7 +8,6 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface AssetRepository extends ReactiveMongoRepository<Asset, String> {
-
   Flux<Asset> findAllByProjectNameIsNull();
 
 }
