@@ -34,4 +34,8 @@ public class AssetDomainService {
     return assetRepository.findById(id);
   }
 
+  public Flux<Asset> findAll() {
+    return assetRepository.findAll();
+  }
+
 }

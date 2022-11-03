@@ -33,15 +33,15 @@ public class DisclosureScheduler {
   private final AssetService assetService;
 
 
-  @Scheduled (cron = "0/20 * * * * *")
+  @Scheduled (cron = "0 */5 * * * *")
   @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
   public void getDisclosureXangleApi() {
 
     log.info("xangleApi Scheduler Current Thread : {}", Thread.currentThread().getName());
 
     disclosureService.saveDisclosure(0);
-    assetService.saveAsset(0);
-    assetService.insertProjectName();
+//    assetService.saveAsset(0);
+//    assetService.insertProjectName();
 
   }
 
