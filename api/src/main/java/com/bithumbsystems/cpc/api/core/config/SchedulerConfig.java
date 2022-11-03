@@ -23,7 +23,15 @@ public class SchedulerConfig {
 
   @Bean
   public MongoClient mongoClient() {
-    return MongoClients.create("mongodb://" + config.getMongoProperties().getMongodbUrl() + ":" + config.getMongoProperties().getMongodbPort());
+
+    String str = String.format("mongodb://%s:%s@%s:%s",
+        config.getMongoProperties().getMongodbUser(),
+        config.getMongoProperties().getMongodbPassword(),
+        config.getMongoProperties().getMongodbUrl(),
+        config.getMongoProperties().getMongodbPort()
+    );
+
+    return MongoClients.create(str);
   }
 
   @Bean
