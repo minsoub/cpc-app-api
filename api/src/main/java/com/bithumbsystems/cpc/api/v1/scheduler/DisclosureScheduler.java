@@ -40,7 +40,7 @@ public class DisclosureScheduler {
     log.info("xangleApi Scheduler Current Thread : {}", Thread.currentThread().getName());
 
     disclosureService.saveDisclosure(0);
-//    assetService.saveAsset(0);
+    assetService.saveAsset(0);
 //    assetService.insertProjectName();
 
   }

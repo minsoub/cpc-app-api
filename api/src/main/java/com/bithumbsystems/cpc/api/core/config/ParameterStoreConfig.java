@@ -63,7 +63,7 @@ public class ParameterStoreConfig {
         this.awsProperties.setIvKey(getParameterValue(awsProperties.getParamStoreIvName(), KMS_ALIAS_NAME));
         this.awsProperties.setCpcCryptoKey(getParameterValue(awsProperties.getParamStoreCpcName().trim(), CPC_CRYPT_ALIAS_NAME));
 
-        this.xangleProperties.setXangleApiKey(getParameterValue(awsProperties.getParamStoreXangleName().trim(), CPC_XANGLE_API_KEY));
+        this.xangleProperties.setXangleApiKey(getParameterValue(awsProperties.getParamStoreCpcName().trim(), CPC_XANGLE_API_KEY));
     }
 
     protected String getParameterValue(String storeName, String type) {

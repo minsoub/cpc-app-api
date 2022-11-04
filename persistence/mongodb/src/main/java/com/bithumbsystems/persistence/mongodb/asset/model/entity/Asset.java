@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,7 +22,9 @@ public class Asset extends Date {
   private String symbol;
   private String assetId;
   private String name;
+  @Setter
   private String projectName;
+  @Setter
   private String assetName;
   @Builder.Default
   private Boolean isSymbolMatching = true;

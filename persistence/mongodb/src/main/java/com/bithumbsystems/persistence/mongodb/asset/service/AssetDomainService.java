@@ -34,6 +34,10 @@ public class AssetDomainService {
     return assetRepository.findById(id);
   }
 
+  public Mono<Asset> findAssetByAssetId(String assetId) {
+    return assetRepository.findAssetByAssetId(assetId);
+  }
+
   public Flux<Asset> findAll() {
     return assetRepository.findAll();
   }

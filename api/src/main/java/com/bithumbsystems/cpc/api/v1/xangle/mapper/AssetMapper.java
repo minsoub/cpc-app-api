@@ -27,4 +27,5 @@ public interface AssetMapper {
     return profileResponseToEntity(assetProfileResponse.getData(), assetProfileResponse.getData().get(0).getAssetProfile());
   }
 
+
 }

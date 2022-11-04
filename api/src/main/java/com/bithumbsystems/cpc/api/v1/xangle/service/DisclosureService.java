@@ -52,23 +52,16 @@ public class DisclosureService {
 
     return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).flatMap(
         disclosure -> {
-          return assetService.checkAsset(disclosure.getProjectSymbol()).map(
+          return assetService.findById(disclosure.getProjectSymbol()).map(
               asset -> {
-                DisclosureClientResponse.DisclosureClientResponseBuilder disclosureClientResponseBuilder = DisclosureClientResponse.builder()
+                return DisclosureClientResponse.builder()
                     .symbol(disclosure.getProjectSymbol())
                     .projectLogo(disclosure.getProjectLogo())
                     .title(disclosure.getTitle())
                     .createDate(disclosure.getPublishTimestamp())
-                    .xangleUrl(disclosure.getXangleUrl());
-
-                if (asset.getProjectName() == null) {
-                  log.info("asset project name is null asset : {}", asset);
-                  return disclosureClientResponseBuilder.projectName(
-                  assetService.insertProjectNameBySymbol(asset).block().getProjectName()).build();
-                } else {
-                  log.info("asset project name asset : {}", asset);
-                  return disclosureClientResponseBuilder.projectName(asset.getProjectName()).build();
-                }
+                    .xangleUrl(disclosure.getXangleUrl())
+                    .projectName(asset.getProjectName())
+                    .build();
               }
           );
         }

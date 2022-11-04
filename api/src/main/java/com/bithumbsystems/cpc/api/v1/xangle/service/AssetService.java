@@ -6,10 +6,14 @@ import com.bithumbsystems.cpc.api.core.config.property.XangleProperties;
 import com.bithumbsystems.cpc.api.core.util.WebClientUtil;
 import com.bithumbsystems.cpc.api.v1.xangle.mapper.AssetMapper;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetProfileResponse;
+import com.bithumbsystems.cpc.api.v1.xangle.response.AssetProfileResponse.Data;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetResponse;
 import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
 import com.bithumbsystems.persistence.mongodb.asset.service.AssetDomainService;
+import com.bithumbsystems.persistence.mongodb.disclosure.model.entity.Disclosure;
+import java.awt.print.Pageable;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,16 +32,12 @@ public class AssetService {
 
   private final WebClientUtil webClientUtil;
 
-
-  public Flux<Asset> saveAll(List<Asset> assetList) {
-    return assetDomainService.saveAll(assetList);
-  }
-
-  public Flux<Asset> findAllByProjectNameIsNull() {
-    return assetDomainService.findAllByProjectNameIsNull();
+  public Mono<Asset> findById(String symbol) {
+    return assetDomainService.findById(symbol);
   }
 
   public void saveAsset(int page) {
+
     Mono<AssetResponse> assetMono = getAssetResponseFromXangle(page);
 
     assetMono.map(AssetMapper.INSTANCE::toEntity)
@@ -60,6 +60,36 @@ public class AssetService {
         })
         .subscribe();
 
+    getProjectName(assetMono);
+  }
+
+  public void getProjectName(Mono<AssetResponse> assetMono) {
+    log.info("assetMono value : {}", assetMono);
+
+    assetMono.map(it -> {
+      List<Asset> assetList = AssetMapper.INSTANCE.toEntity(it);
+      String  assetIdList = assetList.stream().map(Asset::getAssetId).collect(Collectors.joining(","));
+      var profileResponseMono = getAssetProfileResponseFromXangle(assetIdList);
+
+      log.info("profile Response Mono: {}", profileResponseMono);
+
+      profileResponseMono.map(
+          data -> {
+            log.info("data value : {}", data);
+            for (Data responseProfile : data.getData()) {
+              assetDomainService.findAssetByAssetId(responseProfile.getAssetId()).map(
+                  asset -> {
+                    asset.setProjectName(responseProfile.getAssetProfile().getProjectName());
+                    asset.setAssetName(responseProfile.getAssetProfile().getAssetName());
+                    return assetDomainService.save(asset).subscribe();
+                  }
+              ).subscribe();
+            }
+            return data;
+          }
+      ).subscribe();
+      return it;
+    }).subscribe();
   }
 
   public Mono<AssetResponse> getAssetResponseFromXangle(Integer page) {
@@ -75,75 +105,6 @@ public class AssetService {
         .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
         .bodyToMono(AssetResponse.class);
-  }
-
-//  public void insertProjectName() {
-//    findAllByProjectNameIsNull().publishOn(Schedulers.boundedElastic()).map(
-//        it -> {
-//            getAssetProfileResponseFromXangle(it.getAssetId()).publishOn(Schedulers.boundedElastic()).map(
-//                assetProfileResponse -> {
-//                  Asset asset = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
-//
-//                  asset = Asset.builder()
-//                      .assetId(it.getAssetId())
-//                      .symbol(it.getSymbol())
-//                      .projectName(asset.getProjectName())
-//                      .assetName(asset.getAssetName())
-//                      .name(it.getName())
-//                      .build();
-//
-//                  return assetDomainService.save(asset).subscribe();
-//                }
-//            ).subscribe();
-//          return it;
-//        }
-//    ).subscribe();
-//  }
-
-  public Mono<Asset> insertProjectNameBySymbol(Asset asset) {
-
-    return assetDomainService.findById(asset.getSymbol()).flatMap(
-        it -> {
-          return getAssetProfileResponseFromXangle(asset.getAssetId()).flatMap(
-              assetProfileResponse -> {
-                Asset assetResponse = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
-
-                assetResponse = Asset.builder()
-                    .assetId(it.getAssetId())
-                    .symbol(it.getSymbol())
-                    .projectName(assetResponse.getProjectName())
-                    .assetName(assetResponse.getAssetName())
-                    .name(it.getName())
-                    .build();
-
-                return assetDomainService.save(assetResponse);
-              }
-          );
-        }
-    );
-
-//    return assetDomainService.findById(asset.getSymbol()).publishOn(Schedulers.boundedElastic()).map(
-//        it -> {
-//          getAssetProfileResponseFromXangle(it.getAssetId()).publishOn(Schedulers.boundedElastic()).map(
-//              assetProfileResponse -> {
-//                Asset assetResponse = AssetMapper.INSTANCE.profileResponseToEntity(assetProfileResponse);
-//
-//                assetResponse = Asset.builder()
-//                    .assetId(it.getAssetId())
-//                    .symbol(it.getSymbol())
-//                    .projectName(assetResponse.getProjectName())
-//                    .assetName(assetResponse.getAssetName())
-//                    .name(it.getName())
-//                    .build();
-//
-//                return assetDomainService.save(assetResponse).subscribe();
-//              }
-//          ).subscribe();
-//          return it;
-//        }
-//    ).map();
-
-
   }
 
   public Mono<AssetProfileResponse> getAssetProfileResponseFromXangle(String assetId) {
@@ -165,16 +126,6 @@ public class AssetService {
               return e;
             }
         );
-  }
-
-  public Mono<Asset> checkAsset(String projectSymbol) {
-    return assetDomainService.findById(projectSymbol).switchIfEmpty(
-        Mono.defer(() -> {
-          log.info("check asset start symbol : {}", projectSymbol);
-          saveAsset(0);
-          return assetDomainService.findById(projectSymbol);
-        })
-    );
   }
 
 }
