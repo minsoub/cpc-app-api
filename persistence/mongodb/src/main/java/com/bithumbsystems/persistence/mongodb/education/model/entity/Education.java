@@ -23,7 +23,13 @@ public class Education {
   private String cellPhone;
   private String content;
   private LocalDateTime desireDate;
-  @Builder.Default()
-  private Boolean isAnswerComplete = false;
+  private Boolean isAnswerComplete;
+  private Boolean isConsignmentAgreement;
+  private Boolean isUseAgreement;
+  private Boolean isEmail;
+  private String answer;
+  private LocalDateTime createDate;
+  private LocalDateTime updateDate;
+  private String updateAccountId;
 
 }

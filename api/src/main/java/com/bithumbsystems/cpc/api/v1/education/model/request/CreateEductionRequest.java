@@ -28,7 +28,7 @@ public class CreateEductionRequest {
 //  @Pattern(regexp = "^\\d+")
   private String cellPhone;
   private String content;
-
-
+  private Boolean isConsignmentAgreement;
+  private Boolean isUseAgreement;
 
 }

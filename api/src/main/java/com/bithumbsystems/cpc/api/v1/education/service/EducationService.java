@@ -9,6 +9,8 @@ import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
 import com.bithumbsystems.cpc.api.v1.education.model.request.CreateEductionRequest;
 import com.bithumbsystems.persistence.mongodb.education.model.entity.Education;
 import com.bithumbsystems.persistence.mongodb.education.service.EducationDomainService;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +63,10 @@ public class EducationService {
         .cellPhone(AES256Util.encryptAES(awsProperties.getKmsKey(), request.getCellPhone(), awsProperties.getSaltKey(), awsProperties.getIvKey()))
         .content(request.getContent())
         .desireDate(DateUtils.toLocalDateTime(request.getDesireDate()))
+        .isConsignmentAgreement(request.getIsConsignmentAgreement())
+        .isUseAgreement(request.getIsUseAgreement())
+        .isAnswerComplete(false)
+        .createDate(LocalDateTime.now())
         .build();
   }
 
