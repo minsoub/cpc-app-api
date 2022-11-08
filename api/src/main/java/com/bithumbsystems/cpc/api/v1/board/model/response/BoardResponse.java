@@ -15,6 +15,7 @@ public class BoardResponse {
   private Long id;
   private String title;
   private String contents;
+  private String boardMasterId;
   private List<String> tags;
   private String thumbnail;
   private String description;

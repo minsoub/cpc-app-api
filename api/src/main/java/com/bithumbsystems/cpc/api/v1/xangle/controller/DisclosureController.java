@@ -4,6 +4,7 @@ import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.DIS
 import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.FIRST_PAGE_NUM;
 
 import com.bithumbsystems.cpc.api.core.model.response.MultiResponse;
+import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.service.DisclosureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,8 @@ public class DisclosureController {
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
       @RequestParam(name = "page_no", defaultValue = FIRST_PAGE_NUM) int pageNo,
       @RequestParam(name = "page_size", defaultValue = DISCLOSURE_DEFAULT_PAGE_SIZE) int pageSize) {
-    return ResponseEntity.ok().body(disclosureService.getDisclosureList(query, pageNo, pageSize).map(MultiResponse::new));
+    return ResponseEntity.ok().body(disclosureService.getDisclosureList(query, pageNo, pageSize).map(
+        SingleResponse::new));
   }
 
 

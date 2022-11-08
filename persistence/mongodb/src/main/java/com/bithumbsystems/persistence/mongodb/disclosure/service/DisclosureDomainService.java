@@ -31,4 +31,8 @@ public class DisclosureDomainService {
   public Flux<Disclosure> findByOrderByPublishTimestampDesc(String search, Pageable pageable) {
     return disclosureCustomRepository.findByOrderByPublishTimestampDesc(search, pageable);
   }
+
+  public Mono<Long> countBySearchText(String search, Pageable pageable) {
+    return disclosureCustomRepository.countBySearchText(search, pageable);
+  }
 }

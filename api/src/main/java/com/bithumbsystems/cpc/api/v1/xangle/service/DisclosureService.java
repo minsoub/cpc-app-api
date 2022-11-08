@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -46,9 +48,35 @@ public class DisclosureService {
   private final XangleProperties xangleProperties;
   private final AssetService assetService;
 
-  public Mono<List<DisclosureClientResponse>> getDisclosureList(String search, int pageNo, int pageSize) {
-
+  public Mono<Page<DisclosureClientResponse>> getDisclosureList(String search, int pageNo, int pageSize) {
     Pageable page = PageRequest.of(pageNo , pageSize);
+
+    return getDisclosureClientResponse(search, page)
+        .collectList()
+        .zipWith(disclosureDomainService.countBySearchText(search, page)
+            .map(c -> c))
+        .map(t -> new PageImpl<>(t.getT1(), page, t.getT2()));
+
+  }
+
+  public Flux<DisclosureClientResponse> getDisclosureClientResponse(String search, Pageable page) {
+
+    return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).map(
+        disclosure -> {
+          log.info("disclosure value : {}", disclosure);
+          return DisclosureClientResponse.builder()
+              .symbol(disclosure.getProjectSymbol())
+              .projectLogo(disclosure.getProjectLogo())
+              .title(disclosure.getTitle())
+              .createDate(disclosure.getPublishTimestamp())
+              .xangleUrl(disclosure.getXangleUrl())
+              .projectName(disclosure.getCpcAsset().get(0).getProjectName())
+              .build();
+        }
+    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
+  }
+
+  public Flux<DisclosureClientResponse> findDisclosureFlux(String search, Pageable page) {
 
     return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).flatMap(
         disclosure -> {
@@ -65,8 +93,7 @@ public class DisclosureService {
               }
           );
         }
-    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder())).collectList();
-
+    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
   }
 
   public Mono<DisclosureResponse> getDisclosureResponseFromXangle(int page) {

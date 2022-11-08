@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOptions;
 import org.springframework.data.mongodb.core.aggregation.LimitOperation;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -37,6 +38,45 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
 
   @Override
   public Flux<Disclosure> findByOrderByPublishTimestampDesc(String search, Pageable pageable) {
+    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAsset(search, pageable), "cpc_disclosure", Disclosure.class);
+  }
+
+  @Override
+  public Mono<Long> countBySearchText(String search, Pageable pageable) {
+    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAssetWithoutPageable(search), "cpc_disclosure", Disclosure.class).count();
+  }
+
+  private Aggregation getAggregationDisclosureWithAsset(String search, Pageable pageable) {
+
+    Criteria criteria = new Criteria();
+
+    criteria.orOperator(
+        where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
+        where("title").regex(".*" + search.toLowerCase() + ".*", "i"),
+        where("cpc_asset.project_name").regex(".*" + search.toLowerCase() + ".*", "i")
+    ).andOperator(
+        where("cpc_asset.project_name").exists(true),
+        where("cpc_asset.project_name").ne(false)
+    );
+
+    MatchOperation matchOperation = Aggregation.match(criteria);
+    LookupOperation lookupOperation = Aggregation.lookup("cpc_asset", "project_symbol", "_id", "cpc_asset");
+    SortOperation sortOperation = Aggregation.sort(Sort.by(Direction.DESC, "publish_timestamp"));
+    SkipOperation skipOperation = Aggregation.skip(pageable.getPageNumber() * pageable.getPageSize());
+    LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+
+
+    return Aggregation.newAggregation(
+        lookupOperation,
+        matchOperation,
+        sortOperation,
+        skipOperation,
+        limitOperation
+    );
+  }
+
+  private Aggregation getAggregationDisclosureWithAssetWithoutPageable(String search) {
+
     Criteria criteria = new Criteria();
 
     criteria.orOperator(
@@ -48,16 +88,11 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
     MatchOperation matchOperation = Aggregation.match(criteria);
     LookupOperation lookupOperation = Aggregation.lookup("cpc_asset", "project_symbol", "_id", "cpc_asset");
     SortOperation sortOperation = Aggregation.sort(Sort.by(Direction.DESC, "publish_timestamp"));
-    SkipOperation skipOperation = Aggregation.skip(pageable.getPageNumber() * pageable.getPageSize());
-    LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
-    Aggregation aggregation = Aggregation.newAggregation(
+
+    return Aggregation.newAggregation(
         lookupOperation,
         matchOperation,
-        sortOperation,
-        skipOperation,
-        limitOperation
+        sortOperation
     );
-
-    return reactiveMongoTemplate.aggregate(aggregation, "cpc_disclosure", Disclosure.class);
   }
 }
