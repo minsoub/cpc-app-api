@@ -5,33 +5,25 @@ import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.EXC
 import com.bithumbsystems.cpc.api.core.config.property.XangleProperties;
 import com.bithumbsystems.cpc.api.core.util.WebClientUtil;
 import com.bithumbsystems.cpc.api.v1.xangle.mapper.DisclosureMapper;
-import com.bithumbsystems.cpc.api.v1.xangle.mapper.DisclosureResponseMapper;
-import com.bithumbsystems.cpc.api.v1.xangle.response.AssetResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureClientResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureResponse;
-import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
-import com.bithumbsystems.persistence.mongodb.asset.service.AssetDomainService;
 import com.bithumbsystems.persistence.mongodb.disclosure.model.entity.Disclosure;
 import com.bithumbsystems.persistence.mongodb.disclosure.service.DisclosureDomainService;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -47,6 +39,9 @@ public class DisclosureService {
   private final WebClientUtil webClientUtil;
   private final XangleProperties xangleProperties;
   private final AssetService assetService;
+
+  @Value("${listener.host}")
+  private String listenerApiUrl;
 
   public Mono<Page<DisclosureClientResponse>> getDisclosureList(String searchCategory, String search, int pageNo, int pageSize) {
     Pageable page = PageRequest.of(pageNo , pageSize);
@@ -97,7 +92,8 @@ public class DisclosureService {
   }
 
   public Mono<DisclosureResponse> getDisclosureResponseFromXangle(int page) {
-    return webClientUtil.requestGet(xangleProperties.getHost())
+
+    return webClientUtil.requestGet(listenerApiUrl)
         .get()
         .uri(uriBuilder ->
             uriBuilder.path(xangleProperties.getDisclosurePath())
@@ -105,13 +101,25 @@ public class DisclosureService {
                 .queryParam("page", page)
                 .build()
         )
-        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+        .header("XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
-        .bodyToMono(DisclosureResponse.class)
-        .retryWhen(
-            Retry.backoff(3, Duration.ofSeconds(60))
-                .filter(throwable -> throwable instanceof TooManyRequests)
-        );
+        .bodyToMono(DisclosureResponse.class);
+
+//    return webClientUtil.requestGet(xangleProperties.getHost())
+//        .get()
+//        .uri(uriBuilder ->
+//            uriBuilder.path("/xangle" + xangleProperties.getDisclosurePath())
+//                .queryParam("exchange_name", EXCHANGE_NAME)
+//                .queryParam("page", page)
+//                .build()
+//        )
+//        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+//        .retrieve()
+//        .bodyToMono(DisclosureResponse.class)
+//        .retryWhen(
+//            Retry.backoff(3, Duration.ofSeconds(60))
+//                .filter(throwable -> throwable instanceof TooManyRequests)
+//        );
   }
 
   public void saveDisclosure(int page) {

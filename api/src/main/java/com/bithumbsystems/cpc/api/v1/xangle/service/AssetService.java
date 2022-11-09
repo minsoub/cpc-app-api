@@ -8,6 +8,7 @@ import com.bithumbsystems.cpc.api.v1.xangle.mapper.AssetMapper;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetProfileResponse;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetProfileResponse.Data;
 import com.bithumbsystems.cpc.api.v1.xangle.response.AssetResponse;
+import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureResponse;
 import com.bithumbsystems.persistence.mongodb.asset.model.entity.Asset;
 import com.bithumbsystems.persistence.mongodb.asset.service.AssetDomainService;
 import com.bithumbsystems.persistence.mongodb.disclosure.model.entity.Disclosure;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,11 +29,10 @@ import reactor.core.scheduler.Schedulers;
 public class AssetService {
 
   private final AssetDomainService assetDomainService;
-
   private final XangleProperties xangleProperties;
-
   private final WebClientUtil webClientUtil;
-
+  @Value("${listener.host}")
+  private String listenerApiUrl;
   public Mono<Asset> findById(String symbol) {
     return assetDomainService.findById(symbol);
   }
@@ -93,8 +94,8 @@ public class AssetService {
   }
 
   public Mono<AssetResponse> getAssetResponseFromXangle(Integer page) {
-    log.info("get Asset list xangle api call");
-    return webClientUtil.requestGet(xangleProperties.getHost())
+
+    return webClientUtil.requestGet(listenerApiUrl)
         .get()
         .uri(uriBuilder ->
             uriBuilder.path(xangleProperties.getAssetListPath())
@@ -102,14 +103,27 @@ public class AssetService {
                 .queryParam("page", page)
                 .build()
         )
-        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+        .header("XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
         .bodyToMono(AssetResponse.class);
+
+//    return webClientUtil.requestGet(xangleProperties.getHost())
+//        .get()
+//        .uri(uriBuilder ->
+//            uriBuilder.path(xangleProperties.getAssetListPath())
+//                .queryParam("exchange_name", EXCHANGE_NAME)
+//                .queryParam("page", page)
+//                .build()
+//        )
+//        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+//        .retrieve()
+//        .bodyToMono(AssetResponse.class);
   }
 
   public Mono<AssetProfileResponse> getAssetProfileResponseFromXangle(String assetId) {
     log.info("get Asset profile xangle api call");
-    return webClientUtil.requestGet(xangleProperties.getHost())
+
+    return webClientUtil.requestGet(listenerApiUrl)
         .get()
         .uri(uriBuilder ->
             uriBuilder.path(xangleProperties.getAssetProfilePath())
@@ -117,15 +131,27 @@ public class AssetService {
                 .queryParam("asset_ids", assetId)
                 .build()
         )
-        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+        .header("XANGLE_API_KEY", xangleProperties.getXangleApiKey())
         .retrieve()
-        .bodyToMono(AssetProfileResponse.class)
-        .onErrorMap(
-            e -> {
-              log.error(e.toString());
-              return e;
-            }
-        );
+        .bodyToMono(AssetProfileResponse.class);
+
+//    return webClientUtil.requestGet(xangleProperties.getHost())
+//        .get()
+//        .uri(uriBuilder ->
+//            uriBuilder.path(xangleProperties.getAssetProfilePath())
+//                .queryParam("lang", "ko")
+//                .queryParam("asset_ids", assetId)
+//                .build()
+//        )
+//        .header("X-XANGLE_API_KEY", xangleProperties.getXangleApiKey())
+//        .retrieve()
+//        .bodyToMono(AssetProfileResponse.class)
+//        .onErrorMap(
+//            e -> {
+//              log.error(e.toString());
+//              return e;
+//            }
+//        );
   }
 
 }
