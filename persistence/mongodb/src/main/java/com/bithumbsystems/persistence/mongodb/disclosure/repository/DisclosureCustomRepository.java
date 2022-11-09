@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface DisclosureCustomRepository {
-  Flux<Disclosure> findByOrderByPublishTimestampDesc(String search, Pageable pageable);
+  Flux<Disclosure> findByOrderByPublishTimestampDesc(String searchCategory, String search, Pageable pageable);
 
-  Mono<Long> countBySearchText(String search, Pageable pageable);
+  Mono<Long> countBySearchText(String searchCategory, String search, Pageable pageable);
 }

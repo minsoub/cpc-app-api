@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -37,28 +38,39 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
   private final AssetRepository assetRepository;
 
   @Override
-  public Flux<Disclosure> findByOrderByPublishTimestampDesc(String search, Pageable pageable) {
-    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAsset(search, pageable), "cpc_disclosure", Disclosure.class);
+  public Flux<Disclosure> findByOrderByPublishTimestampDesc(String searchCategory, String search, Pageable pageable) {
+    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAsset(searchCategory, search, pageable), "cpc_disclosure", Disclosure.class);
   }
 
   @Override
-  public Mono<Long> countBySearchText(String search, Pageable pageable) {
-    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAssetWithoutPageable(search), "cpc_disclosure", Disclosure.class).count();
+  public Mono<Long> countBySearchText(String searchCategory, String search, Pageable pageable) {
+    return reactiveMongoTemplate.aggregate(getAggregationDisclosureWithAssetWithoutPageable(searchCategory, search), "cpc_disclosure", Disclosure.class).count();
   }
 
-  private Aggregation getAggregationDisclosureWithAsset(String search, Pageable pageable) {
+  private Aggregation getAggregationDisclosureWithAsset(String searchCategory, String search, Pageable pageable) {
 
     Criteria criteria = new Criteria();
 
-    criteria.orOperator(
-        where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
-        where("title").regex(".*" + search.toLowerCase() + ".*", "i"),
-        where("cpc_asset.project_name").regex(".*" + search.toLowerCase() + ".*", "i")
-    ).andOperator(
-        where("cpc_asset.project_name").exists(true),
-        where("cpc_asset.project_name").ne(false)
+    if (StringUtils.hasLength(search)) {
+        if (searchCategory.equals("1")) {  // 제목 + 심볼
+            criteria.orOperator(
+                    where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
+                    where("title").regex(".*" + search.toLowerCase() + ".*", "i")
+            );
+        } else if(searchCategory.equals("2")) { // 프로젝트명
+            criteria.orOperator(
+                    where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i")
+            );
+        } else if (searchCategory.equals("3")) {  // 제목
+            criteria.orOperator(
+                    where("title").regex(".*" + search.toLowerCase() + ".*", "i")
+            );
+        }
+    }
+    criteria.andOperator(
+            where("cpc_asset.project_name").exists(true),
+            where("cpc_asset.project_name").ne(false)
     );
-
     MatchOperation matchOperation = Aggregation.match(criteria);
     LookupOperation lookupOperation = Aggregation.lookup("cpc_asset", "project_symbol", "_id", "cpc_asset");
     SortOperation sortOperation = Aggregation.sort(Sort.by(Direction.DESC, "publish_timestamp"));
@@ -75,16 +87,30 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
     );
   }
 
-  private Aggregation getAggregationDisclosureWithAssetWithoutPageable(String search) {
+  private Aggregation getAggregationDisclosureWithAssetWithoutPageable(String searchCategory, String search) {
 
     Criteria criteria = new Criteria();
 
-    criteria.orOperator(
-        where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
-        where("title").regex(".*" + search.toLowerCase() + ".*", "i"),
-        where("cpc_asset.project_name").regex(".*" + search.toLowerCase() + ".*", "i")
+    if (StringUtils.hasLength(search)) {
+      if (searchCategory.equals("1")) {  // 제목 + 심볼
+        criteria.orOperator(
+                where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
+                where("title").regex(".*" + search.toLowerCase() + ".*", "i")
+        );
+      } else if(searchCategory.equals("2")) { // 프로젝트명
+        criteria.orOperator(
+                where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i")
+        );
+      } else if (searchCategory.equals("3")) {  // 제목
+        criteria.orOperator(
+                where("title").regex(".*" + search.toLowerCase() + ".*", "i")
+        );
+      }
+    }
+    criteria.andOperator(
+            where("cpc_asset.project_name").exists(true),
+            where("cpc_asset.project_name").ne(false)
     );
-
     MatchOperation matchOperation = Aggregation.match(criteria);
     LookupOperation lookupOperation = Aggregation.lookup("cpc_asset", "project_symbol", "_id", "cpc_asset");
     SortOperation sortOperation = Aggregation.sort(Sort.by(Direction.DESC, "publish_timestamp"));

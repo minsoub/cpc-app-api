@@ -50,6 +50,7 @@ public class BoardController {
   /**
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
+   * @param searchCategory 검색 카테고리
    * @param query 검색어
    * @param pageNo - 페이지 번호
    * @param pageSize - 페이지 사이즈
@@ -59,6 +60,7 @@ public class BoardController {
   @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 페이지 단위로 조회", tags = "게시판 화면 공통")
   public ResponseEntity<Mono<?>> getBoards(
       @PathVariable String boardMasterId,
+      @RequestParam(name = "search_category", required = true, defaultValue = "") String searchCategory,
       @RequestParam(name = "query", required = false, defaultValue = "") String query,
       @RequestParam(name = "category", required = false) String category,
       @RequestParam(name = "page_no", defaultValue = FIRST_PAGE_NUM) int pageNo,
@@ -72,7 +74,7 @@ public class BoardController {
       categories = Arrays.asList(URLDecoder.decode(category, "UTF-8").split(";"));
     }
 
-    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
+    return ResponseEntity.ok().body(boardService.getBoards(boardMasterId, searchCategory, keyword, categories, PageRequest.of(pageNo, pageSize, Sort.by("create_date").descending()))
         .map(SingleResponse::new));
   }
 
@@ -101,5 +103,35 @@ public class BoardController {
   public ResponseEntity<Mono<?>> getBoardData(@PathVariable String boardMasterId, @PathVariable Long boardId) {
     return ResponseEntity.ok().body(boardService.getBoardData(boardId)
         .map(SingleResponse::new));
+  }
+
+  /**
+   *  게시글 상세 조회
+   * @param boardMasterId
+   * @param boardId
+   * @param searchCategory
+   * @param query
+   * @param category
+   * @return
+   * @throws UnsupportedEncodingException
+   */
+  @GetMapping("/{boardMasterId}/{boardId}/detail")
+  @Operation(summary = "게시글 상세 조회", description = "게시글 정보를 조회", tags = "게시판 화면 공통")
+  public ResponseEntity<Mono<?>> getBoardDataDetail(@PathVariable String boardMasterId,
+                                                    @PathVariable Long boardId,
+                                                    @RequestParam(name = "search_category", required = true, defaultValue = "") String searchCategory,
+                                                    @RequestParam(name = "query", required = false, defaultValue = "") String query,
+                                                    @RequestParam(name = "category", required = false) String category
+                                                    ) throws UnsupportedEncodingException  {
+    String keyword = URLDecoder.decode(query, "UTF-8");
+    log.info("keyword: {}", keyword.replaceAll("[\r\n]",""));
+
+    List<String> categories = new ArrayList<String>();
+    if (StringUtils.isNotEmpty(category)) {
+      categories = Arrays.asList(URLDecoder.decode(category, "UTF-8").split(";"));
+    }
+
+    return ResponseEntity.ok().body(boardService.getBoardData(boardMasterId, boardId, searchCategory, query, categories)
+            .map(SingleResponse::new));
   }
 }

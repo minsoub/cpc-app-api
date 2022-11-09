@@ -38,16 +38,17 @@ public class BoardService {
   /**
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
+   * @param searchCategory 검색 카테고리
    * @param keyword 키워드
    * @param categories 카테고리
    * @param pageRequest 페이지 정보
    * @return
    */
-  public Mono<Page<BoardResponse>> getBoards(String boardMasterId, String keyword, List<String> categories, PageRequest pageRequest) {
-    return boardDomainService.findPageBySearchText(boardMasterId, keyword, categories, pageRequest)
+  public Mono<Page<BoardResponse>> getBoards(String boardMasterId, String searchCategory, String keyword, List<String> categories, PageRequest pageRequest) {
+    return boardDomainService.findPageBySearchText(boardMasterId, searchCategory, keyword, categories, pageRequest)
           .map(BoardMapper.INSTANCE::toDto)
           .collectList()
-          .zipWith(boardDomainService.countBySearchText(boardMasterId, keyword, categories)
+          .zipWith(boardDomainService.countBySearchText(boardMasterId, searchCategory, keyword, categories)
               .map(c -> c))
           .map(t -> new PageImpl<>(t.getT1(), pageRequest, t.getT2()));
   }
@@ -71,5 +72,37 @@ public class BoardService {
     return boardDomainService.incrementReadCount(boardId)
         .flatMap(board -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
         .switchIfEmpty(Mono.error(new InvalidParameterException(ErrorCode.NOT_FOUND_CONTENT)));
+  }
+
+  /**
+   * 게시글 상세 조회 및 이전/다음 글 조회
+   *
+   * @param boardMasterId
+   * @param boardId
+   * @param searchCategory
+   * @param keyword
+   * @param categories
+   * @return
+   */
+  public Mono<BoardResponse> getBoardData(String boardMasterId, Long boardId, String searchCategory,  String keyword, List<String> categories) {
+    return boardDomainService.incrementReadCount(boardId)
+            .flatMap(board -> boardDomainService.getBoardData(boardId).map(BoardMapper.INSTANCE::toDto))
+            .flatMap(boardData -> {
+                return boardDomainService.findPageBySearchPrevData(boardMasterId, boardId, searchCategory, keyword, categories)
+                        .flatMap(r1 -> {
+                          boardData.setPrevId(r1.getId());
+                          return Mono.just(boardData);
+                        })
+                        .switchIfEmpty(Mono.just(boardData));
+            })
+            .flatMap(boardData -> {
+              return boardDomainService.findPageBySearchNextData(boardMasterId, boardId, searchCategory, keyword, categories)
+                      .flatMap(r2 -> {
+                        boardData.setNextId(r2.getId());
+                        return Mono.just(boardData);
+                      })
+                      .switchIfEmpty(Mono.just(boardData));
+            })
+            .switchIfEmpty(Mono.error(new InvalidParameterException(ErrorCode.NOT_FOUND_CONTENT)));
   }
 }
