@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.education.service;
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.service.RsaCipherService;
 import com.bithumbsystems.cpc.api.core.util.AES256Util;
 import com.bithumbsystems.cpc.api.core.util.DateUtils;
 import com.bithumbsystems.cpc.api.core.util.ValidationUtils;
@@ -25,27 +26,29 @@ public class EducationService {
 
   private final EducationDomainService educationDomainService;
 
+  private final RsaCipherService rsaCipherService;
+
   public Mono<Education> createEducation(CreateEductionRequest request) {
 
-    log.info("@@@@@@@@@@");
-    log.info(awsProperties.getCpcCryptoKey());
-    log.info(request.getName());
-    log.info(request.getEmail());
-    log.info(request.getCellPhone());
+    return rsaCipherService.getRsaPrivateKey().flatMap(
+        privateKey -> {
+          request.setName(rsaCipherService.decryptRSA(request.getName(), privateKey));
+          request.setEmail(rsaCipherService.decryptRSA(request.getEmail(), privateKey));
+          request.setCellPhone(rsaCipherService.decryptRSA(request.getCellPhone(), privateKey));
 
-    request.setName(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getName()));
-    request.setEmail(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getEmail()));
-    request.setCellPhone(AES256Util.decryptAES(awsProperties.getCpcCryptoKey(), request.getCellPhone()));
+          log.info("교육 신청");
     log.info(request.getName());
     log.info(request.getEmail());
     log.info(request.getCellPhone());
     log.info(request.getDesireDate().toString());
 
-    validCreateEducationRequest(request);
+          validCreateEducationRequest(request);
 
-    Education education = makeEducation(request);
+          Education education = makeEducation(request);
 
-    return educationDomainService.save(education);
+          return educationDomainService.save(education);
+        }
+    );
 
   }
 
