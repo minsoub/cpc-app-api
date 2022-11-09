@@ -31,6 +31,20 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     private final ParameterStoreConfig config;
 
+    @Bean
+    public MongoClient mongoClient() {
+
+        String str = String.format("mongodb://%s:%s@%s:%s",
+            config.getMongoProperties().getMongodbUser(),
+            config.getMongoProperties().getMongodbPassword(),
+            config.getMongoProperties().getMongodbUrl(),
+            config.getMongoProperties().getMongodbPort()
+        );
+
+        return MongoClients.create(str);
+    }
+
+
     @Override
     protected String getDatabaseName() {
         return config.getMongoProperties().getMongodbName();
@@ -83,5 +97,10 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
         converter.setCodecRegistryProvider(databaseFactory);
 
         return converter;
+    }
+
+    @Override
+    public boolean autoIndexCreation() {
+        return true;
     }
 }

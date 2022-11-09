@@ -22,19 +22,6 @@ public class SchedulerConfig {
   private final ParameterStoreConfig config;
 
   @Bean
-  public MongoClient mongoClient() {
-
-    String str = String.format("mongodb://%s:%s@%s:%s",
-        config.getMongoProperties().getMongodbUser(),
-        config.getMongoProperties().getMongodbPassword(),
-        config.getMongoProperties().getMongodbUrl(),
-        config.getMongoProperties().getMongodbPort()
-    );
-
-    return MongoClients.create(str);
-  }
-
-  @Bean
   public LockProvider lockProvider(MongoClient mongoClient) {
     return new ReactiveStreamsMongoLockProvider(mongoClient.getDatabase(config.getMongoProperties().getMongodbName()));
   }

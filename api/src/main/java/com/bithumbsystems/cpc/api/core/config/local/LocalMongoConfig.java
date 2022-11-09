@@ -67,4 +67,9 @@ public class LocalMongoConfig extends AbstractReactiveMongoConfiguration {
 
     return converter;
   }
+
+  @Override
+  public boolean autoIndexCreation() {
+    return true;
+  }
 }
