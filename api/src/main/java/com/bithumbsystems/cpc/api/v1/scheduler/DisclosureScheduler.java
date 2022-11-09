@@ -33,7 +33,7 @@ public class DisclosureScheduler {
   private final AssetService assetService;
 
 
-  @Scheduled (cron = "0 */2 * * * *")
+  @Scheduled (cron = "0 */20 * * * *")
   @SchedulerLock(name = "xangleApiCall", lockAtMostFor = "PT10S", lockAtLeastFor = "PT10S")
   public void getDisclosureXangleApi() {
 
