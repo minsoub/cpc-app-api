@@ -91,6 +91,7 @@ public class BoardService {
                 return boardDomainService.findPageBySearchPrevData(boardMasterId, boardId, searchCategory, keyword, categories)
                         .flatMap(r1 -> {
                           boardData.setPrevId(r1.getId());
+                          boardData.setPrevTitle(r1.getTitle());
                           return Mono.just(boardData);
                         })
                         .switchIfEmpty(Mono.just(boardData));
@@ -99,6 +100,7 @@ public class BoardService {
               return boardDomainService.findPageBySearchNextData(boardMasterId, boardId, searchCategory, keyword, categories)
                       .flatMap(r2 -> {
                         boardData.setNextId(r2.getId());
+                        boardData.setNextTitle(r2.getTitle());
                         return Mono.just(boardData);
                       })
                       .switchIfEmpty(Mono.just(boardData));
