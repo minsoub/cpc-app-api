@@ -94,7 +94,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
     if (categories.size() > 0) {
       criteria.andOperator(
               where("board_master_id").is(boardMasterId),
-              where("id").gt(boardId),
+              where("id").lt(boardId),
               where("is_use").is(true),
               where("is_set_notice").is(false),
               where("category").in(categories)
@@ -102,7 +102,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
     } else {
       criteria.andOperator(
               where("board_master_id").is(boardMasterId),
-              where("id").gt(boardId),
+              where("id").lt(boardId),
               where("is_use").is(true),
               where("is_set_notice").is(false)
       );
@@ -137,7 +137,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
     if (categories.size() > 0) {
       criteria.andOperator(
               where("board_master_id").is(boardMasterId),
-              where("id").lt(boardId),
+              where("id").gt(boardId),
               where("is_use").is(true),
               where("is_set_notice").is(false),
               where("category").in(categories)
@@ -145,7 +145,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
     } else {
       criteria.andOperator(
               where("board_master_id").is(boardMasterId),
-              where("id").lt(boardId),
+              where("id").gt(boardId),
               where("is_use").is(true),
               where("is_set_notice").is(false)
       );
