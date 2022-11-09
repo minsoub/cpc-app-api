@@ -22,4 +22,6 @@ public class BoardResponse {
   private String category;
   private String contributor;
   private LocalDateTime createDate;
+  private Long prevId;
+  private Long nextId;
 }

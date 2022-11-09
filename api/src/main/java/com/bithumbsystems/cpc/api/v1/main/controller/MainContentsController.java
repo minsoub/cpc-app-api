@@ -29,10 +29,10 @@ public class MainContentsController {
   @GetMapping(value = "/contents")
   @Operation(summary = "메인화면 선택된 컨텐츠 조회", description = "메인화면 > 하단 투자가이드 탭: 선택된 컨텐츠 조회", tags = "메인화면 > 하단 투자가이드 탭")
   public ResponseEntity<Mono<?>> getMainContents() {
-    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getDigitalAssetBasic(),
-            mainContentsService.getInsightColumn(),
-            mainContentsService.getDigitalAssetTrends(),
-            mainContentsService.getBlockchainNews())
+    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getDigitalAssetBasic(),  // 빗썸 경제연구소
+            mainContentsService.getInsightColumn(), // 오피니언
+            mainContentsService.getDigitalAssetTrends(), // 이지코노미
+            mainContentsService.getBlockchainNews())  //
         .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
             .digitalAssetBasic(tuple.getT1())
             .insightColumn(tuple.getT2())
