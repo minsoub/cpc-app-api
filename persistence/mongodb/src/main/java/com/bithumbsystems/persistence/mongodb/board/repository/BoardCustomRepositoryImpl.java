@@ -49,32 +49,40 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
   private Query getQueryBySearchText(String boardMasterId, String searchCategory, String keyword, List<String> categories) {
     var query = new Query();
     Criteria criteria = new Criteria();
-    Criteria orCriteria = new Criteria();
 
-
-    criteria.andOperator(
-        where("board_master_id").is(boardMasterId),
-        where("is_use").is(true),
-        where("is_set_notice").is(false)
-    );
-    query.addCriteria(criteria);
+    if (categories.size() > 0) {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false),
+              where("category").in(categories)
+      );
+    } else {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false)
+      );
+    }
     if (StringUtils.hasLength(keyword)) {
         if (searchCategory.equals("1")) {  // 제목 + 본문
-          orCriteria.orOperator(
+          criteria.orOperator(
                   where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
                   where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i")
           );
-          query.addCriteria(orCriteria);
         } else if(searchCategory.equals("2")) { // 제목
-            query.addCriteria(Criteria.where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+          criteria.orOperator(
+                  where("title").regex(".*" + keyword.toLowerCase() + ".*", "i")
+          );
         } else if(searchCategory.equals("3")){  // 해시태그
-            query.addCriteria(Criteria.where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+          criteria.orOperator(
+                  where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+          );
         }
     }
 
-    if (categories.size() > 0) {
-      query.addCriteria(Criteria.where("category").in(categories));
-    }
+
+    query.addCriteria(criteria);
 
     return query;
   }
@@ -82,33 +90,40 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
   private Query getQueryBySearchPrevText(String boardMasterId, Long boardId, String searchCategory, String keyword, List<String> categories) {
     var query = new Query();
     Criteria criteria = new Criteria();
-    Criteria orCriteria = new Criteria();
 
-
-    criteria.andOperator(
-            where("board_master_id").is(boardMasterId),
-            where("is_use").is(true),
-            where("is_set_notice").is(false),
-            where("id").lt(boardId)
-    );
-    query.addCriteria(criteria);
+    if (categories.size() > 0) {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("id").gt(boardId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false),
+              where("category").in(categories)
+      );
+    } else {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("id").gt(boardId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false)
+      );
+    }
     if (StringUtils.hasLength(keyword)) {
       if (searchCategory.equals("1")) {  // 제목 + 본문
-        orCriteria.orOperator(
+        criteria.orOperator(
                 where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
                 where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i")
         );
-        query.addCriteria(orCriteria);
       } else if(searchCategory.equals("2")) { // 제목
-        query.addCriteria(Criteria.where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+        criteria.orOperator(
+                where("title").regex(".*" + keyword.toLowerCase() + ".*", "i")
+        );
       } else if(searchCategory.equals("3")){  // 해시태그
-        query.addCriteria(Criteria.where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+        criteria.orOperator(
+                where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+        );
       }
     }
-
-    if (categories.size() > 0) {
-      query.addCriteria(Criteria.where("category").in(categories));
-    }
+    query.addCriteria(criteria);
     query.with(Sort.by("create_date").descending());
     query.limit(1);
 
@@ -118,33 +133,40 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
   private Query getQueryBySearchNextText(String boardMasterId, Long boardId, String searchCategory, String keyword, List<String> categories) {
     var query = new Query();
     Criteria criteria = new Criteria();
-    Criteria orCriteria = new Criteria();
 
-
-    criteria.andOperator(
-            where("board_master_id").is(boardMasterId),
-            where("is_use").is(true),
-            where("is_set_notice").is(false),
-            where("id").gt(boardId)
-    );
-    query.addCriteria(criteria);
+    if (categories.size() > 0) {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("id").lt(boardId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false),
+              where("category").in(categories)
+      );
+    } else {
+      criteria.andOperator(
+              where("board_master_id").is(boardMasterId),
+              where("id").lt(boardId),
+              where("is_use").is(true),
+              where("is_set_notice").is(false)
+      );
+    }
     if (StringUtils.hasLength(keyword)) {
       if (searchCategory.equals("1")) {  // 제목 + 본문
-        orCriteria.orOperator(
+        criteria.orOperator(
                 where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"),
                 where("contents").regex(".*" + keyword.toLowerCase() + ".*", "i")
         );
-        query.addCriteria(orCriteria);
       } else if(searchCategory.equals("2")) { // 제목
-        query.addCriteria(Criteria.where("title").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+        criteria.orOperator(
+                where("title").regex(".*" + keyword.toLowerCase() + ".*", "i")
+        );
       } else if(searchCategory.equals("3")){  // 해시태그
-        query.addCriteria(Criteria.where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i"));
+        criteria.orOperator(
+                where("tags").regex(".*" + keyword.toLowerCase() + ".*", "i")
+        );
       }
     }
-
-    if (categories.size() > 0) {
-      query.addCriteria(Criteria.where("category").in(categories));
-    }
+    query.addCriteria(criteria);
     query.with(Sort.by("create_date").ascending());
     query.limit(1);
 
