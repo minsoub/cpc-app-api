@@ -57,7 +57,7 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
                     where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
                     where("title").regex(".*" + search.toLowerCase() + ".*", "i")
             );
-        } else if(searchCategory.equals("2")) { // 프로젝트명
+        } else if(searchCategory.equals("2")) { // 심볼
             criteria.orOperator(
                     where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i")
             );
@@ -113,12 +113,10 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
     );
     MatchOperation matchOperation = Aggregation.match(criteria);
     LookupOperation lookupOperation = Aggregation.lookup("cpc_asset", "project_symbol", "_id", "cpc_asset");
-    SortOperation sortOperation = Aggregation.sort(Sort.by(Direction.DESC, "publish_timestamp"));
 
     return Aggregation.newAggregation(
         lookupOperation,
-        matchOperation,
-        sortOperation
+        matchOperation
     );
   }
 }

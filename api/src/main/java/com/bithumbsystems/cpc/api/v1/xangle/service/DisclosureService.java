@@ -68,28 +68,28 @@ public class DisclosureService {
               .projectName(disclosure.getCpcAsset().get(0).getProjectName())
               .build();
         }
-    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
+    );
   }
 
-  public Flux<DisclosureClientResponse> findDisclosureFlux(String searchCategory, String search, Pageable page) {
-
-    return disclosureDomainService.findByOrderByPublishTimestampDesc(searchCategory, search, page).flatMap(
-        disclosure -> {
-          return assetService.findById(disclosure.getProjectSymbol()).map(
-              asset -> {
-                return DisclosureClientResponse.builder()
-                    .symbol(disclosure.getProjectSymbol())
-                    .projectLogo(disclosure.getProjectLogo())
-                    .title(disclosure.getTitle())
-                    .createDate(disclosure.getPublishTimestamp())
-                    .xangleUrl(disclosure.getXangleUrl())
-                    .projectName(asset.getProjectName())
-                    .build();
-              }
-          );
-        }
-    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
-  }
+//  public Flux<DisclosureClientResponse> findDisclosureFlux(String searchCategory, String search, Pageable page) {
+//
+//    return disclosureDomainService.findByOrderByPublishTimestampDesc(searchCategory, search, page).flatMap(
+//        disclosure -> {
+//          return assetService.findById(disclosure.getProjectSymbol()).map(
+//              asset -> {
+//                return DisclosureClientResponse.builder()
+//                    .symbol(disclosure.getProjectSymbol())
+//                    .projectLogo(disclosure.getProjectLogo())
+//                    .title(disclosure.getTitle())
+//                    .createDate(disclosure.getPublishTimestamp())
+//                    .xangleUrl(disclosure.getXangleUrl())
+//                    .projectName(asset.getProjectName())
+//                    .build();
+//              }
+//          );
+//        }
+//    ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
+//  }
 
   public Mono<DisclosureResponse> getDisclosureResponseFromXangle(int page) {
 
