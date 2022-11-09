@@ -48,20 +48,20 @@ public class DisclosureService {
   private final XangleProperties xangleProperties;
   private final AssetService assetService;
 
-  public Mono<Page<DisclosureClientResponse>> getDisclosureList(String search, int pageNo, int pageSize) {
+  public Mono<Page<DisclosureClientResponse>> getDisclosureList(String searchCategory, String search, int pageNo, int pageSize) {
     Pageable page = PageRequest.of(pageNo , pageSize);
 
-    return getDisclosureClientResponse(search, page)
+    return getDisclosureClientResponse(searchCategory, search, page)
         .collectList()
-        .zipWith(disclosureDomainService.countBySearchText(search, page)
+        .zipWith(disclosureDomainService.countBySearchText(searchCategory, search, page)
             .map(c -> c))
         .map(t -> new PageImpl<>(t.getT1(), page, t.getT2()));
 
   }
 
-  public Flux<DisclosureClientResponse> getDisclosureClientResponse(String search, Pageable page) {
+  public Flux<DisclosureClientResponse> getDisclosureClientResponse(String searchCategory, String search, Pageable page) {
 
-    return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).map(
+    return disclosureDomainService.findByOrderByPublishTimestampDesc(searchCategory, search, page).map(
         disclosure -> {
           log.info("disclosure value : {}", disclosure);
           return DisclosureClientResponse.builder()
@@ -76,9 +76,9 @@ public class DisclosureService {
     ).sort(Comparator.comparing(DisclosureClientResponse::getCreateDate, Comparator.reverseOrder()));
   }
 
-  public Flux<DisclosureClientResponse> findDisclosureFlux(String search, Pageable page) {
+  public Flux<DisclosureClientResponse> findDisclosureFlux(String searchCategory, String search, Pageable page) {
 
-    return disclosureDomainService.findByOrderByPublishTimestampDesc(search, page).flatMap(
+    return disclosureDomainService.findByOrderByPublishTimestampDesc(searchCategory, search, page).flatMap(
         disclosure -> {
           return assetService.findById(disclosure.getProjectSymbol()).map(
               asset -> {

@@ -28,11 +28,11 @@ public class DisclosureDomainService {
     return disclosureRepository.findFirstByOrderByPublishTimestampDesc();
   }
 
-  public Flux<Disclosure> findByOrderByPublishTimestampDesc(String search, Pageable pageable) {
-    return disclosureCustomRepository.findByOrderByPublishTimestampDesc(search, pageable);
+  public Flux<Disclosure> findByOrderByPublishTimestampDesc(String searchCategory, String search, Pageable pageable) {
+    return disclosureCustomRepository.findByOrderByPublishTimestampDesc(searchCategory, search, pageable);
   }
 
-  public Mono<Long> countBySearchText(String search, Pageable pageable) {
-    return disclosureCustomRepository.countBySearchText(search, pageable);
+  public Mono<Long> countBySearchText(String searchCategory, String search, Pageable pageable) {
+    return disclosureCustomRepository.countBySearchText(searchCategory, search, pageable);
   }
 }
