@@ -24,6 +24,8 @@ public class BoardResponse {
   private LocalDateTime createDate;
   private Long prevId;
   private String prevTitle;
+  private LocalDateTime prevCreateDate;
   private Long nextId;
   private String nextTitle;
+  private LocalDateTime nextCreateDate;
 }

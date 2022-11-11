@@ -92,6 +92,7 @@ public class BoardService {
                         .flatMap(r1 -> {
                           boardData.setPrevId(r1.getId());
                           boardData.setPrevTitle(r1.getTitle());
+                          boardData.setPrevCreateDate(r1.getCreateDate());
                           return Mono.just(boardData);
                         })
                         .switchIfEmpty(Mono.just(boardData));
@@ -101,6 +102,7 @@ public class BoardService {
                       .flatMap(r2 -> {
                         boardData.setNextId(r2.getId());
                         boardData.setNextTitle(r2.getTitle());
+                        boardData.setNextCreateDate(r2.getCreateDate());
                         return Mono.just(boardData);
                       })
                       .switchIfEmpty(Mono.just(boardData));
