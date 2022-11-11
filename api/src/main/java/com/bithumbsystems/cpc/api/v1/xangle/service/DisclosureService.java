@@ -97,8 +97,9 @@ public class DisclosureService {
         .get()
         .uri(uriBuilder ->
             uriBuilder.path(xangleProperties.getDisclosurePath())
-                .queryParam("exchange_name", EXCHANGE_NAME)
+                .queryParam("exchange", EXCHANGE_NAME)
                 .queryParam("page", page)
+                .queryParam("lang", "ko")
                 .build()
         )
         .header("XANGLE_API_KEY", xangleProperties.getXangleApiKey())
