@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 @Slf4j
 @Getter
 @Configuration
-@Profile("dev|qa|prod|eks-dev")
+@Profile("dev|qa|prod|eks-dev|eks-prod")
 public class AwsConfig {
 
     private final AwsProperties awsProperties;
