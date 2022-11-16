@@ -24,7 +24,7 @@ public class Education {
   private String content;
   private LocalDateTime desireDate;
   private Boolean isAnswerComplete;
-  private Boolean isConsignmentAgreement;
+  //private Boolean isConsignmentAgreement;
   private Boolean isUseAgreement;
   private Boolean isEmail;
   private String answer;

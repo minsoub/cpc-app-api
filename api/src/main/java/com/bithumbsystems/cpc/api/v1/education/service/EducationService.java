@@ -66,7 +66,7 @@ public class EducationService {
         .cellPhone(AES256Util.encryptAES(awsProperties.getKmsKey(), request.getCellPhone(), awsProperties.getSaltKey(), awsProperties.getIvKey()))
         .content(request.getContent())
         .desireDate(DateUtils.toLocalDateTime(request.getDesireDate()))
-        .isConsignmentAgreement(request.getIsConsignmentAgreement())
+        //.isConsignmentAgreement(request.getIsConsignmentAgreement())
         .isUseAgreement(request.getIsUseAgreement())
         .isAnswerComplete(false)
         .createDate(LocalDateTime.now())
