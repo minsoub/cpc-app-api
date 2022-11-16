@@ -32,7 +32,7 @@ public class EducationController {
   @Operation(summary = "교육 신청", description = "찾아가는 교육 > 교육 신청", tags = "찾아가는 교육 > 교육 신청")
   public ResponseEntity<?> createEducation(CreateEductionRequest request) {
 
-    if (!request.getIsConsignmentAgreement() || !request.getIsUseAgreement()) {
+    if (!request.getIsUseAgreement()) {  // !request.getIsConsignmentAgreement() || !request.getIsUseAgreement()) {
         // 에러 출력.
         throw new InvalidParameterException(ErrorCode.INVALID_ITEM_FORMAT);
     }
