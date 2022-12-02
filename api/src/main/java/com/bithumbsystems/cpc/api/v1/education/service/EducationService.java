@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
@@ -30,41 +31,35 @@ public class EducationService {
 
   private final RsaCipherService rsaCipherService;
 
-  public Mono<Education> createEducation(CreateEductionRequest request) throws InvalidParameterException {
+  public Mono<Education> createEducation(CreateEductionRequest request) {
 
-    return rsaCipherService.getRsaPrivateKey().flatMap(
+    return rsaCipherService.getRsaPrivateKey().publishOn(Schedulers.boundedElastic()).flatMap(
         privateKey -> {
           request.setName(rsaCipherService.decryptRSA(request.getName(), privateKey));
           request.setEmail(rsaCipherService.decryptRSA(request.getEmail(), privateKey));
           request.setCellPhone(rsaCipherService.decryptRSA(request.getCellPhone(), privateKey));
 
-          log.info("교육 신청");
-          log.info(request.getName());
-          log.info(request.getEmail());
-          log.info(request.getCellPhone());
-          log.info(request.getDesireDate().toString());
 
-          try {
-            validCreateEducationRequest(request);
-          } catch (InvalidParameterException e) {
-            log.info("controller error");
+          if (validCreateEducationRequest(request)) {
+            Education education = makeEducation(request);
+            return educationDomainService.save(education);
+          } else {
+            log.info("boolean is false");
+            return Mono.error(new InvalidParameterException(ErrorCode.INVALID_INPUT_VALUE));
           }
 
-          Education education = makeEducation(request);
-
-          return educationDomainService.save(education);
         }
     );
 
   }
 
-  private void validCreateEducationRequest(CreateEductionRequest request) throws InvalidParameterException {
-    ValidationUtils.assertNameFormat(request.getName());
-    ValidationUtils.assertEmailFormat(request.getEmail());
-    ValidationUtils.assertCellPhoneFormat(request.getCellPhone());
+  public boolean validCreateEducationRequest(CreateEductionRequest request) {
+    return ValidationUtils.assertNameFormat(request.getName())
+        && ValidationUtils.assertEmailFormat(request.getEmail())
+        && ValidationUtils.assertCellPhoneFormat(request.getCellPhone());
   }
 
-  private Education makeEducation(CreateEductionRequest request) {
+  public Education makeEducation(CreateEductionRequest request) {
     return Education.builder()
         .id(UUID.randomUUID().toString())
         .name(AES256Util.encryptAES(awsProperties.getKmsKey(), request.getName(), awsProperties.getSaltKey(), awsProperties.getIvKey()))

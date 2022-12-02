@@ -10,28 +10,25 @@ import org.springframework.util.StringUtils;
 
 public class ValidationUtils {
 
-  public static void assertEmailFormat(String value) throws InvalidParameterException {
+  public static boolean assertEmailFormat(String value) throws InvalidParameterException {
     if (!EmailValidator.getInstance().isValid(value)) {
-      throw new InvalidParameterException(ErrorCode.INVALID_EMAIL_FORMAT);
+      return false;
     }
+    return true;
   }
 
-  public static void assertNameFormat(String value) throws InvalidParameterException {
+  public static boolean assertNameFormat(String value) {
     String regexp = "^[가-힣]*$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(value);
-    if (!matcher.matches()) {
-      throw new InvalidParameterException(ErrorCode.INVALID_NAME_FORMAT);
-    }
+    return matcher.matches();
   }
 
-  public static void assertCellPhoneFormat(String value) throws InvalidParameterException {
+  public static boolean assertCellPhoneFormat(String value) throws InvalidParameterException {
     String regexp = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(value);
-    if (!matcher.matches()) {
-      throw new InvalidParameterException(ErrorCode.INVALID_PHONE_FORMAT);
-    }
+    return matcher.matches();
   }
 
   public static void assertAllowFileExt(String fileName, String[] allowExt) {
