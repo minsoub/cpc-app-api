@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.education.service;
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.core.service.RsaCipherService;
 import com.bithumbsystems.cpc.api.core.util.AES256Util;
 import com.bithumbsystems.cpc.api.core.util.DateUtils;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -28,7 +30,7 @@ public class EducationService {
 
   private final RsaCipherService rsaCipherService;
 
-  public Mono<Education> createEducation(CreateEductionRequest request) {
+  public Mono<Education> createEducation(CreateEductionRequest request) throws InvalidParameterException {
 
     return rsaCipherService.getRsaPrivateKey().flatMap(
         privateKey -> {
@@ -37,12 +39,16 @@ public class EducationService {
           request.setCellPhone(rsaCipherService.decryptRSA(request.getCellPhone(), privateKey));
 
           log.info("교육 신청");
-    log.info(request.getName());
-    log.info(request.getEmail());
-    log.info(request.getCellPhone());
-    log.info(request.getDesireDate().toString());
+          log.info(request.getName());
+          log.info(request.getEmail());
+          log.info(request.getCellPhone());
+          log.info(request.getDesireDate().toString());
 
-          validCreateEducationRequest(request);
+          try {
+            validCreateEducationRequest(request);
+          } catch (InvalidParameterException e) {
+            log.info("controller error");
+          }
 
           Education education = makeEducation(request);
 
@@ -52,7 +58,7 @@ public class EducationService {
 
   }
 
-  private void validCreateEducationRequest(CreateEductionRequest request) {
+  private void validCreateEducationRequest(CreateEductionRequest request) throws InvalidParameterException {
     ValidationUtils.assertNameFormat(request.getName());
     ValidationUtils.assertEmailFormat(request.getEmail());
     ValidationUtils.assertCellPhoneFormat(request.getCellPhone());

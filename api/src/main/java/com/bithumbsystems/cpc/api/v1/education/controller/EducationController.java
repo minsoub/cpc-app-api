@@ -30,14 +30,15 @@ public class EducationController {
 
   @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "교육 신청", description = "찾아가는 교육 > 교육 신청", tags = "찾아가는 교육 > 교육 신청")
-  public ResponseEntity<?> createEducation(CreateEductionRequest request) {
+  public ResponseEntity<?> createEducation(CreateEductionRequest request) throws InvalidParameterException{
 
     if (!request.getIsUseAgreement()) {  // !request.getIsConsignmentAgreement() || !request.getIsUseAgreement()) {
         // 에러 출력.
         throw new InvalidParameterException(ErrorCode.INVALID_ITEM_FORMAT);
     }
+
     educationService.createEducation(request).subscribe();
 
-    return ResponseEntity.ok().body(Mono.just(new SingleResponse()));
+    return ResponseEntity.badRequest().body(Mono.just(new SingleResponse()));
   }
 }
