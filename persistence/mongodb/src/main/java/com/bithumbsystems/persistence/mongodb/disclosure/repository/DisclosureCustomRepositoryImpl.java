@@ -57,9 +57,9 @@ public class DisclosureCustomRepositoryImpl implements DisclosureCustomRepositor
                     where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i"),
                     where("title").regex(".*" + search.toLowerCase() + ".*", "i")
             );
-        } else if(searchCategory.equals("2")) { // 심볼
+        } else if(searchCategory.equals("2")) { // 프로젝트명
             criteria.orOperator(
-                    where("project_symbol").regex(".*" + search.toUpperCase() + ".*", "i")
+                    where("cpc_asset.project_name").regex(".*" + search.toUpperCase() + ".*", "i")
             );
         } else if (searchCategory.equals("3")) {  // 제목
             criteria.orOperator(

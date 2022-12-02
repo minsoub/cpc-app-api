@@ -2,6 +2,7 @@ package com.bithumbsystems.cpc.api.v1.board.service;
 
 import com.bithumbsystems.cpc.api.core.exception.InvalidParameterException;
 import com.bithumbsystems.cpc.api.core.model.enums.ErrorCode;
+import com.bithumbsystems.cpc.api.core.util.SearchTextUtil;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMapper;
 import com.bithumbsystems.cpc.api.v1.board.mapper.BoardMasterMapper;
 import com.bithumbsystems.cpc.api.v1.board.model.response.BoardMasterResponse;
@@ -45,10 +46,13 @@ public class BoardService {
    * @return
    */
   public Mono<Page<BoardResponse>> getBoards(String boardMasterId, String searchCategory, String keyword, List<String> categories, PageRequest pageRequest) {
-    return boardDomainService.findPageBySearchText(boardMasterId, searchCategory, keyword, categories, pageRequest)
+
+    String searchText = SearchTextUtil.specialCharacterValidation(keyword);
+
+    return boardDomainService.findPageBySearchText(boardMasterId, searchCategory, searchText, categories, pageRequest)
           .map(BoardMapper.INSTANCE::toDto)
           .collectList()
-          .zipWith(boardDomainService.countBySearchText(boardMasterId, searchCategory, keyword, categories)
+          .zipWith(boardDomainService.countBySearchText(boardMasterId, searchCategory, searchText, categories)
               .map(c -> c))
           .map(t -> new PageImpl<>(t.getT1(), pageRequest, t.getT2()));
   }

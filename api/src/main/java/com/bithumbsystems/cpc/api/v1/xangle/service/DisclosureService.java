@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.xangle.service;
 import static com.bithumbsystems.cpc.api.core.config.constant.GlobalConstant.EXCHANGE_NAME;
 
 import com.bithumbsystems.cpc.api.core.config.property.XangleProperties;
+import com.bithumbsystems.cpc.api.core.util.SearchTextUtil;
 import com.bithumbsystems.cpc.api.core.util.WebClientUtil;
 import com.bithumbsystems.cpc.api.v1.xangle.mapper.DisclosureMapper;
 import com.bithumbsystems.cpc.api.v1.xangle.response.DisclosureClientResponse;
@@ -46,9 +47,11 @@ public class DisclosureService {
   public Mono<Page<DisclosureClientResponse>> getDisclosureList(String searchCategory, String search, int pageNo, int pageSize) {
     Pageable page = PageRequest.of(pageNo , pageSize);
 
-    return getDisclosureClientResponse(searchCategory, search, page)
+    String searchText = SearchTextUtil.specialCharacterValidation(search);
+
+    return getDisclosureClientResponse(searchCategory, searchText, page)
         .collectList()
-        .zipWith(disclosureDomainService.countBySearchText(searchCategory, search, page)
+        .zipWith(disclosureDomainService.countBySearchText(searchCategory, searchText, page)
             .map(c -> c))
         .map(t -> new PageImpl<>(t.getT1(), page, t.getT2()));
 
