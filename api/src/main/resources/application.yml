@@ -80,6 +80,28 @@ listener:
 
 ---
 server:
+  port: 8085
+spring:
+  config:
+    import: classpath:aws-properties-localstack.yml, classpath:springdoc.yml
+    activate:
+      on-profile: localstack
+  data:
+    mongodb:
+      host: ${auth.mongo.host:localhost}
+      port: ${auth.mongo.port:27017}
+      database: ${auth.mongo.database:test}
+      auto-index-creation: true
+      uuid-representation: standard
+      field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
+logging:
+  config: classpath:logback-spring-local.xml
+listener:
+  host: http://localhost:7071
+
+
+---
+server:
   port: 8080
 spring:
   config:

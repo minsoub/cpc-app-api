@@ -14,13 +14,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
-@Profile("local")
+@Profile("local|localstack")
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S")
 public class LocalSchedulerConfig {
   private final LocalMongoConfig config;
 
   @Bean
-  @Profile("local")
+  @Profile("local|localstack")
   public LockProvider lockProvider(MongoClient mongoClient) {
     return new ReactiveStreamsMongoLockProvider(mongoClient.getDatabase(config.getDatabaseName()));
   }
