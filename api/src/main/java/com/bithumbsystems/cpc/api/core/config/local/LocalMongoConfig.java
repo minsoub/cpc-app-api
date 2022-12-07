@@ -22,7 +22,7 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 
 @Slf4j
 @Configuration
-@Profile("local")
+@Profile("local|localstack")
 @RequiredArgsConstructor
 public class LocalMongoConfig extends AbstractReactiveMongoConfiguration {
 
@@ -66,5 +66,10 @@ public class LocalMongoConfig extends AbstractReactiveMongoConfiguration {
     converter.setCodecRegistryProvider(databaseFactory);
 
     return converter;
+  }
+
+  @Override
+  public boolean autoIndexCreation() {
+    return true;
   }
 }

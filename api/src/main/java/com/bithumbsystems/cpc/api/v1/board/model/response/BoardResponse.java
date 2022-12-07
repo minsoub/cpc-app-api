@@ -15,10 +15,17 @@ public class BoardResponse {
   private Long id;
   private String title;
   private String contents;
+  private String boardMasterId;
   private List<String> tags;
   private String thumbnail;
   private String description;
   private String category;
   private String contributor;
   private LocalDateTime createDate;
+  private Long prevId;
+  private String prevTitle;
+  private LocalDateTime prevCreateDate;
+  private Long nextId;
+  private String nextTitle;
+  private LocalDateTime nextCreateDate;
 }

@@ -4,6 +4,7 @@ import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreCons
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.config.property.MongoProperties;
+import com.bithumbsystems.cpc.api.core.config.property.XangleProperties;
 import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Data;
@@ -18,13 +19,14 @@ import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
 
 @Log4j2
 @Data
-@Profile("local|default")
+@Profile("local|localstack|default")
 @Configuration
 public class LocalParameterStoreConfig {
 
     private SsmClient ssmClient;
     private MongoProperties mongoProperties;
     private final AwsProperties awsProperties;
+    private final XangleProperties xangleProperties;
     private final CredentialsProvider credentialsProvider;
 
     @Value("${spring.profiles.active:}")
@@ -58,6 +60,8 @@ public class LocalParameterStoreConfig {
         log.debug(">> DB Crypto:{}, {}, {}", this.awsProperties.getKmsKey(), this.awsProperties.getSaltKey(), this.awsProperties.getIvKey());
         this.awsProperties.setCpcCryptoKey(getParameterValue(awsProperties.getParamStoreCpcName().trim(), CPC_CRYPT_ALIAS_NAME));
         log.debug(">> CpcCryptoKey:{}", this.awsProperties.getCpcCryptoKey());
+
+        this.xangleProperties.setXangleApiKey(getParameterValue(awsProperties.getParamStoreXangleName().trim(), CPC_XANGLE_API_KEY));
     }
 
     protected String getParameterValue(String storeName, String type) {

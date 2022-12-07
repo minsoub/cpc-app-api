@@ -1,6 +1,7 @@
 package com.bithumbsystems.cpc.api.core.config;
 
 import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.CPC_CRYPT_ALIAS_NAME;
+import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.CPC_XANGLE_API_KEY;
 import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_NAME;
 import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_PASSWORD;
 import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreConstant.DB_PORT;
@@ -10,6 +11,7 @@ import static com.bithumbsystems.cpc.api.core.config.constant.ParameterStoreCons
 
 import com.bithumbsystems.cpc.api.core.config.property.AwsProperties;
 import com.bithumbsystems.cpc.api.core.config.property.MongoProperties;
+import com.bithumbsystems.cpc.api.core.config.property.XangleProperties;
 import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Data;
@@ -30,8 +32,8 @@ public class ParameterStoreConfig {
 
     private SsmClient ssmClient;
     private MongoProperties mongoProperties;
-
     private final AwsProperties awsProperties;
+    private final XangleProperties xangleProperties;
 
     @Value("${cloud.aws.credentials.profile-name}")
     private String profileName;
@@ -60,6 +62,8 @@ public class ParameterStoreConfig {
         this.awsProperties.setSaltKey(getParameterValue(awsProperties.getParamStoreSaltName(), KMS_ALIAS_NAME));
         this.awsProperties.setIvKey(getParameterValue(awsProperties.getParamStoreIvName(), KMS_ALIAS_NAME));
         this.awsProperties.setCpcCryptoKey(getParameterValue(awsProperties.getParamStoreCpcName().trim(), CPC_CRYPT_ALIAS_NAME));
+
+        this.xangleProperties.setXangleApiKey(getParameterValue(awsProperties.getParamStoreXangleName().trim(), CPC_XANGLE_API_KEY));
     }
 
     protected String getParameterValue(String storeName, String type) {

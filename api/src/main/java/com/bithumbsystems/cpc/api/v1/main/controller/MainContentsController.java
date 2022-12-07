@@ -3,6 +3,7 @@ package com.bithumbsystems.cpc.api.v1.main.controller;
 import com.bithumbsystems.cpc.api.core.model.response.SingleResponse;
 import com.bithumbsystems.cpc.api.v1.main.model.response.MainContentsResponse;
 import com.bithumbsystems.cpc.api.v1.main.service.MainContentsService;
+import com.bithumbsystems.persistence.mongodb.board.service.BoardDomainService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +29,10 @@ public class MainContentsController {
   @GetMapping(value = "/contents")
   @Operation(summary = "메인화면 선택된 컨텐츠 조회", description = "메인화면 > 하단 투자가이드 탭: 선택된 컨텐츠 조회", tags = "메인화면 > 하단 투자가이드 탭")
   public ResponseEntity<Mono<?>> getMainContents() {
-    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getDigitalAssetBasic(),
-            mainContentsService.getInsightColumn(),
-            mainContentsService.getDigitalAssetTrends(),
-            mainContentsService.getBlockchainNews())
+    return ResponseEntity.ok().body(Mono.zip(mainContentsService.getDigitalAssetBasic(),  // 빗썸 경제연구소
+            mainContentsService.getInsightColumn(), // 오피니언
+            mainContentsService.getDigitalAssetTrends(), // 이지코노미
+            mainContentsService.getBlockchainNews())  //
         .flatMap(tuple -> Mono.just(MainContentsResponse.builder()
             .digitalAssetBasic(tuple.getT1())
             .insightColumn(tuple.getT2())
@@ -53,4 +54,15 @@ public class MainContentsController {
     return ResponseEntity.ok().body(
         mainContentsService.getBoardList(boardMasterId, size).map(SingleResponse::new));
   }
+
+  /**
+   * 메인화면 상단 빗썸 지수 조회
+   */
+//  @GetMapping("/btci")
+//  public ResponseEntity<?> getBtci() {
+//    return ResponseEntity.ok().body(
+//        mainContentsService.getBtci().map(SingleResponse::new));
+//  }
+
+
 }
