@@ -38,5 +38,7 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
 
   Flux<Board> findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(String BoardMasterId, Boolean isUse);
 
+  Flux<Board> findBoardByIsUseOrderByCreateDateDesc(Boolean isUse);
+
   Mono<Board> findBoardByIdAndIsUse(Long id, Boolean isUse);
 }

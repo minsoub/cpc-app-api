@@ -35,24 +35,52 @@ public class BoardDomainService {
   /**
    * 게시글 목록 조회
    * @param boardMasterId 게시판 ID
+   * @param searchCategory 검색 카테고리
    * @param keyword 키워드
    * @param categories 카테고리
    * @param pageable 페이지 정보
    * @return
    */
-  public Flux<Board> findPageBySearchText(String boardMasterId, String keyword, List<String> categories, Pageable pageable) {
-    return boardCustomRepository.findPageBySearchText(boardMasterId, keyword, categories, pageable);
+  public Flux<Board> findPageBySearchText(String boardMasterId, String searchCategory, String keyword, List<String> categories, Pageable pageable) {
+    return boardCustomRepository.findPageBySearchText(boardMasterId, searchCategory, keyword, categories, pageable);
+  }
+
+  /**
+   * 게시글 이전 글 조회
+   * @param boardMasterId
+   * @param boardId
+   * @param searchCategory
+   * @param keyword
+   * @param categories
+   * @return
+   */
+  public Mono<Board> findPageBySearchPrevData(String boardMasterId, Long boardId, String searchCategory, String keyword, List<String> categories) {
+    return boardCustomRepository.findPageBySearchPrevData(boardMasterId, boardId, searchCategory, keyword, categories);
+  }
+
+  /**
+   * 게시글 다음 글 조회
+   * @param boardMasterId
+   * @param boardId
+   * @param searchCategory
+   * @param keyword
+   * @param categories
+   * @return
+   */
+  public Mono<Board> findPageBySearchNextData(String boardMasterId, Long boardId, String searchCategory, String keyword, List<String> categories) {
+    return boardCustomRepository.findPageBySearchNextData(boardMasterId, boardId, searchCategory, keyword, categories);
   }
 
   /**
    * 게시글 목록 건수 조회
    * @param boardMasterId 게시판 ID
+   * @param searchCategory 검색 카테고리
    * @param keyword 키워드
    * @param categories 카테고리
    * @return
    */
-  public Mono<Long> countBySearchText(String boardMasterId, String keyword, List<String> categories) {
-    return boardCustomRepository.countBySearchText(boardMasterId, keyword, categories);
+  public Mono<Long> countBySearchText(String boardMasterId, String searchCategory, String keyword, List<String> categories) {
+    return boardCustomRepository.countBySearchText(boardMasterId, searchCategory, keyword, categories);
   }
 
   /**
@@ -93,5 +121,12 @@ public class BoardDomainService {
    */
   public Flux<Board> getBoardSize(String boardMasterId) {
     return boardRepository.findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(boardMasterId, true);
+  }
+  /**
+   * 게시글 갯수 단위 조회
+   * @return
+   */
+  public Flux<Board> getAllBoardList() {
+    return boardRepository.findBoardByIsUseOrderByCreateDateDesc(true);
   }
 }

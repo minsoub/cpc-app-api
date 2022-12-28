@@ -48,6 +48,14 @@ logging:
       spring:
         cloud: INFO
 
+xangle:
+  host: https://pro-api.xangle.io
+  disclosure-path: /xangle/v1/disclosure/list/all
+  asset-list-path: /xangle/v1/asset/list
+  asset-profile-path: /xangle/v1/asset/profile
+
+
+
 ---
 server:
   port: 8085
@@ -66,6 +74,30 @@ spring:
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+listener:
+  host: http://localhost:7071
+
+
+---
+server:
+  port: 8085
+spring:
+  config:
+    import: classpath:aws-properties-localstack.yml, classpath:springdoc.yml
+    activate:
+      on-profile: localstack
+  data:
+    mongodb:
+      host: ${auth.mongo.host:localhost}
+      port: ${auth.mongo.port:27017}
+      database: ${auth.mongo.database:test}
+      auto-index-creation: true
+      uuid-representation: standard
+      field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
+logging:
+  config: classpath:logback-spring-local.xml
+listener:
+  host: http://localhost:7071
 
 
 ---
@@ -78,6 +110,8 @@ spring:
       on-profile: eks-dev
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+listener:
+  host: http://k8s-systemsd-smartadm-afbac2448d-819744829f8d8a3a.elb.ap-northeast-2.amazonaws.com
 ---
 server:
   port: 8080
@@ -98,6 +132,8 @@ spring:
       on-profile: dev
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+listener:
+  host: http://172.27.9.23
 ---
 server:
   port: 8080
@@ -108,6 +144,8 @@ spring:
       on-profile: qa
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+listener:
+  host: http://172.27.10.20
 ---
 server:
   port: 8080
@@ -121,3 +159,5 @@ springdoc:
     enabled: false
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+listener:
+  host: http://172.27.8.27
