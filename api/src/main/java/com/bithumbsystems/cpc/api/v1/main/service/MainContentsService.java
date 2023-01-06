@@ -87,7 +87,7 @@ public class MainContentsService {
     Flux<Board> boardFlux;
 
     if (boardMasterId.equals("CPC_ALL")) {
-      boardFlux = boardDomainService.getAllBoardList();
+      boardFlux = boardDomainService.getAllBoardList(size);
     } else {
       boardFlux = boardDomainService.getBoardSize(boardMasterId);
     }
