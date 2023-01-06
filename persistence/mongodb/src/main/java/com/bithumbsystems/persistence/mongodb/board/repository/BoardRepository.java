@@ -43,6 +43,7 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
   //@Query(value = "{$end: { boardMasterId :  { $ne:  'CPC_NOTICE'}}}")
   @Aggregation(pipeline = {
           "{ '$match':  { boardMasterId: {$ne:  'CPC_NOTICE' }}}",
+          "{ '$sort':  { create_date:  -1}}",
           "{ '$limit':  ?0 }"
   })
   Flux<Board> findBoardByIsUseOrderByCreateDateDesc(int limit, Boolean isUse);
