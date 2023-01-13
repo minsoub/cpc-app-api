@@ -2,6 +2,8 @@ package com.bithumbsystems.persistence.mongodb.board.repository;
 
 import com.bithumbsystems.persistence.mongodb.board.model.entity.Board;
 import java.time.LocalDateTime;
+
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -38,7 +40,13 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
 
   Flux<Board> findBoardByBoardMasterIdAndIsUseOrderByCreateDateDesc(String BoardMasterId, Boolean isUse);
 
-  Flux<Board> findBoardByIsUseOrderByCreateDateDesc(Boolean isUse);
+  //@Query(value = "{$end: { boardMasterId :  { $ne:  'CPC_NOTICE'}}}")
+  @Aggregation(pipeline = {
+          "{ '$match':  { boardMasterId: {$ne:  'CPC_NOTICE' }}}",
+          "{ '$sort':  { create_date:  -1}}",
+          "{ '$limit':  ?0 }"
+  })
+  Flux<Board> findBoardByIsUseOrderByCreateDateDesc(int limit, Boolean isUse);
 
   Mono<Board> findBoardByIdAndIsUse(Long id, Boolean isUse);
 }

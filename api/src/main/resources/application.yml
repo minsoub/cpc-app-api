@@ -117,16 +117,6 @@ server:
   port: 8080
 spring:
   config:
-    import: classpath:aws-properties-eks-prod.yml, classpath:springdoc.yml
-    activate:
-      on-profile: eks-prod
-logging:
-  config: classpath:logback-spring-${spring.profiles.active}.xml
----
-server:
-  port: 8080
-spring:
-  config:
     import: classpath:aws-properties-dev.yml, classpath:springdoc.yml
     activate:
       on-profile: dev

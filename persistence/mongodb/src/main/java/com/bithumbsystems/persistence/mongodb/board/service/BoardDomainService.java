@@ -126,7 +126,7 @@ public class BoardDomainService {
    * 게시글 갯수 단위 조회
    * @return
    */
-  public Flux<Board> getAllBoardList() {
-    return boardRepository.findBoardByIsUseOrderByCreateDateDesc(true);
+  public Flux<Board> getAllBoardList(int limit) {
+    return boardRepository.findBoardByIsUseOrderByCreateDateDesc(limit, true);
   }
 }
