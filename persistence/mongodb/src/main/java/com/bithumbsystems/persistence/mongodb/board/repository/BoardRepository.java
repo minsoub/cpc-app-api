@@ -42,7 +42,7 @@ public interface BoardRepository extends ReactiveMongoRepository<Board, Long> {
 
   //@Query(value = "{$end: { boardMasterId :  { $ne:  'CPC_NOTICE'}}}")
   @Aggregation(pipeline = {
-          "{ '$match':  { boardMasterId: {$ne:  'CPC_NOTICE' }}}",
+          "{ '$match':  {'$and':  [{ boardMasterId: {$ne:  'CPC_NOTICE' }}, {isUse:  true} ] }}",
           "{ '$sort':  { create_date:  -1}}",
           "{ '$limit':  ?0 }"
   })
